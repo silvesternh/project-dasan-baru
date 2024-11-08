@@ -224,7 +224,22 @@
                 </ul>
               </div>
             </li>
-
+            <li class="nav-item">
+              <a data-bs-toggle="collapse" href="#base">
+                <i class="fas fa-layer-group"></i>
+                <p>Admins</p>
+                <span class="caret"></span>
+              </a>
+              <div class="collapse" id="base">
+                <ul class="nav nav-collapse">
+                  <li>
+                    <a href="<?= base_url(); ?>/admins/">
+                      <span class="sub-item">Data Admins</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
           </ul>
         </div>
       </div>
