@@ -23,7 +23,7 @@ class AuthGroups extends ShieldAuthGroups
      * --------------------------------------------------------------------
      * The group that a newly registered user is added to.
      */
-    public string $defaultGroup = 'user';
+    public string $defaultGroup = 'admin';
 
     /**
      * --------------------------------------------------------------------
@@ -41,25 +41,41 @@ class AuthGroups extends ShieldAuthGroups
      * @see https://codeigniter4.github.io/shield/quick_start_guide/using_authorization/#change-available-groups for more info
      */
     public array $groups = [
-        'superadmin' => [
-            'title'       => 'Super Admin',
-            'description' => 'Complete control of the site.',
-        ],
         'admin' => [
-            'title'       => 'Admin',
+            'title' => 'Admin',
             'description' => 'Day to day administrators of the site.',
         ],
-        'developer' => [
-            'title'       => 'Developer',
-            'description' => 'Site programmers.',
+        'karolog' => [
+            'title' => 'Karolog',
+            'description' => 'Kepala Biro Logistik.',
         ],
-        'user' => [
-            'title'       => 'User',
-            'description' => 'General users of the site. Often customers.',
+        'pal' => [
+            'title' => 'Ropal',
+            'description' => 'Biro Peralatan.',
         ],
-        'beta' => [
-            'title'       => 'Beta User',
-            'description' => 'Has access to beta-level features.',
+        'renmin' => [
+            'title' => 'Bagrenmin',
+            'description' => 'Bagian Perencanaan & Administrasi.',
+        ],
+        'faskon' => [
+            'title' => 'Rofaskon',
+            'description' => 'Biro Fasilitas & Konstruksi.',
+        ],
+        'ada' => [
+            'title' => 'Roada',
+            'description' => 'Biro Pengadaan Barang/Jasa.',
+        ],
+        'bekum' => [
+            'title' => 'Robekum',
+            'description' => 'Biro Perbekalan Umum.',
+        ],
+        'gudang' => [
+            'title' => 'Gudang',
+            'description' => 'Gudang.',
+        ],
+        'sipil' => [
+            'title' => 'Sipil',
+            'description' => 'Masyarakat Sipil/Kontraktor.',
         ],
     ];
 
@@ -72,13 +88,16 @@ class AuthGroups extends ShieldAuthGroups
      * If a permission is not listed here it cannot be used.
      */
     public array $permissions = [
-        'admin.access'        => 'Can access the sites admin area',
-        'admin.settings'      => 'Can access the main site settings',
-        'users.manage-admins' => 'Can manage other admins',
-        'users.create'        => 'Can create new non-admin users',
-        'users.edit'          => 'Can edit existing non-admin users',
-        'users.delete'        => 'Can delete existing non-admin users',
-        'beta.access'         => 'Can access beta-level features',
+        'admin.access' => 'Dapat Mengakses seluruh situs',
+        'karolog.access' => 'Dapat mengakses seluruh situs terkecuali bagian admin dan user',
+        'pal.access' => 'Dapat mengakses halaman pal',
+        'renmin.access' => 'Dapat mengakses halaman renmin',
+        'faskon.access' => 'Dapat mengakses halaman faskon',
+        'ada.access' => 'Dapat mengakses halaman ada',
+        'bekum.access' => 'Dapat mengakses halaman bekum',
+        'gudang.access' => 'Dapat mengakses halaman gudang',
+        'sipil.access' => 'Dapat mengakses halaman sipil',
+        'user.access' => 'Dapat mengakses halaman user',
     ];
 
     /**
@@ -90,28 +109,42 @@ class AuthGroups extends ShieldAuthGroups
      * This defines group-level permissions.
      */
     public array $matrix = [
-        'superadmin' => [
-            'admin.*',
-            'users.*',
-            'beta.*',
-        ],
         'admin' => [
             'admin.access',
-            'users.create',
-            'users.edit',
-            'users.delete',
-            'beta.access',
+            'pal.access',
+            'renmin.access',
+            'faskon.access',
+            'ada.access',
+            'bekum.access',
+            'gudang.access',
+            'sipil.access',
+            'user.access',
         ],
-        'developer' => [
-            'admin.access',
-            'admin.settings',
-            'users.create',
-            'users.edit',
-            'beta.access',
+        'karolog' => [
+            'pal.access',
+            'renmin.access',
+            'faskon.access',
+            'ada.access',
+            'bekum.access',
+            'gudang.access',
         ],
-        'user' => [],
-        'beta' => [
-            'beta.access',
+        'pal' => [
+            'pal.access',
+        ],
+        'renmin' => [
+            'renmin.access',
+        ],
+        'faskon' => [
+            'faskon.access',
+        ],
+        'ada' => [
+            'ada.access',
+        ],
+        'bekum' => [
+            'bekum.access',
+        ],
+        'gudang' => [
+            'gudang.access',
         ],
     ];
 }

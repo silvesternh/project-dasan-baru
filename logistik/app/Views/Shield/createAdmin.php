@@ -11,8 +11,20 @@
                 <div class="card-header">
                   <div class="card-title">Form Tambah Admins</div>
                 </div>
-                <?= session()->getFlashdata('error') ?>
-                <?= validation_list_errors() ?>
+                <?php if (session('error') !== null): ?>
+                  <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
+                <?php elseif (session('errors') !== null): ?>
+                  <div class="alert alert-danger" role="alert">
+                    <?php if (is_array(session('errors'))): ?>
+                      <?php foreach (session('errors') as $error): ?>
+                        <?= $error ?>
+                        <br>
+                      <?php endforeach ?>
+                    <?php else: ?>
+                      <?= session('errors') ?>
+                    <?php endif ?>
+                  </div>
+                <?php endif ?>
                 <form action="<?= base_url('/admins/') ?>" method="post">
                   <?= csrf_field(); ?>
                   <div class="form-group">

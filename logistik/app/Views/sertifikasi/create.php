@@ -1,4 +1,4 @@
-<?= $this->extend('layout/index'); ?>
+<?= $this->extend('layout/tampil'); ?>
 <?= $this->section('isi'); ?>
 <div class="container">
   <div class="row">
@@ -11,21 +11,29 @@
                 <div class="card-header">
                   <div class="card-title">Form Tambah Data</div>
                 </div>
-                <?php if (session()->getFlashdata('validation')) : ?>
+                <?php if (session()->getFlashdata('validation')): ?>
                   <div class="alert alert-danger" role="alert">
                     <?= session()->getFlashdata('validation')->listErrors() ?>
                   </div>
                 <?php endif; ?>
-                <form action="/sertifikasi/store" method="post">
+                <form action="<?= base_url(); ?>/sertifikasi/store" method="post">
                   <?= csrf_field(); ?>
                   <div class="form-group row">
-                    <label for="satker" class="col-sm-2 col-form-label">Satker</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control <?= ($validation->hasError('satker')) ? 'is-invalid' : ''; ?>" id="satker" name="satker" value="<?= old('satker'); ?>">
+                    <label for="id_satker" class="col-sm-2 col-form-label">Satker</label>
+                    <div class="col-sm-3">
+                      <select class="form-control" id="exampleFormControlSelect1" name="id_satker">
+                        <option value="">Pilih Satker/Satwil.....</option>
+                        <?php
+                        $db = \Config\Database::connect();
+                        $satker = $db->query("SELECT * FROM satker")->getResult();
+                        foreach ($satker as $s): ?>
+                          <option value="<?= $s->id_satker ?>"><?= $s->nama_satker ?></option>
+                        <?php endforeach; ?>
+                      </select>
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="nama" class="col-sm-2 col-form-label">Nama</label>
+                    <label for="nama" class="col-sm-2 col-form-label">Nama Personil</label>
                     <div class="col-sm-10">
                       <input type="text" class="form-control" id="nama" name="nama" value="<?= old('nama'); ?>">
                     </div>
@@ -33,11 +41,12 @@
                   <div class="form-group row">
                     <label for="pangkat" class="col-sm-2 col-form-label">Pangkat</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control" id="pangkat" name="pangkat" value="<?= old('pangkat'); ?>">
+                      <input type="text" class="form-control" id="pangkat" name="pangkat"
+                        value="<?= old('pangkat'); ?>">
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="nrp" class="col-sm-2 col-form-label">NRP/NIP</label>
+                    <label for="nrp" class="col-sm-2 col-form-label">NRP</label>
                     <div class="col-sm-10">
                       <input type="text" class="form-control" id="nrp" name="nrp" value="<?= old('nrp'); ?>">
                     </div>
@@ -45,7 +54,8 @@
                   <div class="form-group row">
                     <label for="jabatan" class="col-sm-2 col-form-label">Jabatan</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control" id="jabatan" name="jabatan" value="<?= old('jabatan'); ?>">
+                      <input type="text" class="form-control" id="jabatan" name="jabatan"
+                        value="<?= old('jabatan'); ?>">
                     </div>
                   </div>
                   <div class="form-group row">
@@ -61,16 +71,17 @@
                     </div>
                   </div>
               </div>
-              <div class="card-action">
-                <button type="submit" class="btn btn-success">Submit</button>
-                <a href="/sertifikasi/index" class="btn btn-danger">Cancel</a>
-              </div>
-              </form>
             </div>
+            <div class="card-action">
+              <button type="submit" class="btn btn-success">Submit</button>
+              <a href="<?= base_url(); ?>sertifikasi/index" class="btn btn-danger">Cancel</a>
+            </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </div>
 <?= $this->endSection(); ?>

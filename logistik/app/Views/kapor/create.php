@@ -1,4 +1,4 @@
-<?= $this->extend('layout/index'); ?>
+<?= $this->extend('layout/tampil'); ?>
 <?= $this->section('isi'); ?>
 <div class="container">
   <div class="row">
@@ -11,17 +11,19 @@
                 <div class="card-header">
                   <div class="card-title">Form Tambah Data</div>
                 </div>
-                <?php if (session()->getFlashdata('validation')) : ?>
+                <?php if (session()->getFlashdata('validation')): ?>
                   <div class="alert alert-danger" role="alert">
                     <?= session()->getFlashdata('validation')->listErrors() ?>
                   </div>
                 <?php endif; ?>
-                <form action="/kapor/store" method="post">
+                <form action="<?= base_url(); ?>/kapor/store" method="post">
                   <?= csrf_field(); ?>
                   <div class="form-group row">
                     <label for="nama" class="col-sm-2 col-form-label">Nama Barang</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control <?= ($validation->hasError('nama')) ? 'is-invalid' : ''; ?>" id="nama" name="nama" value="<?= old('nama'); ?>">
+                      <input type="text"
+                        class="form-control <?= ($validation->hasError('nama')) ? 'is-invalid' : ''; ?>" id="nama"
+                        name="nama" value="<?= old('nama'); ?>">
                     </div>
                   </div>
                   <div class="form-group row">
@@ -57,7 +59,7 @@
               </div>
               <div class="card-action">
                 <button type="submit" class="btn btn-success">Submit</button>
-                <a href="/kapor/index" class="btn btn-danger">Cancel</a>
+                <a href="<?= base_url(); ?>kapor/index" class="btn btn-danger">Cancel</a>
               </div>
               </form>
             </div>

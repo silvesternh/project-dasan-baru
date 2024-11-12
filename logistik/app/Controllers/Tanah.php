@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\TanahModel;
+use App\Models\SatkerModel;
 use CodeIgniter\Controller;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -11,10 +12,14 @@ class Tanah extends Controller
 {
     public function index()
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $tanahModel = new TanahModel();
+        $tanah = $tanahModel->getTanahWithSatker();
         $data = [
             'title' => 'Data tanah',
-            'tanah' => $tanahModel->findAll()
+            'tanah' => $tanahModel->getTanahWithSatker()
         ];
 
         return view('tanah/index', $data);
@@ -22,6 +27,9 @@ class Tanah extends Controller
 
     public function create()
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         // session();
         $data = [
             'title' => 'Tambah tanah',
@@ -33,11 +41,14 @@ class Tanah extends Controller
 
     public function store()
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $validation = \Config\Services::validation();
 
         $rules = [
-            'satker' => [
-                'rules' => 'required[tanah.satker]',
+            'id_satker' => [
+                'rules' => 'required[tanah.id_satker]',
                 'errors' => [
                     'required' => '{field}  harus diisi.'
                 ]
@@ -69,7 +80,7 @@ class Tanah extends Controller
 
         $tanahModel = new TanahModel();
         $data = [
-            'satker' => $this->request->getPost('satker'),
+            'id_satker' => $this->request->getPost('id_satker'),
             'luas' => $this->request->getPost('luas'),
             'bidang' => $this->request->getPost('bidang'),
             'status' => $this->request->getPost('status')
@@ -84,6 +95,9 @@ class Tanah extends Controller
 
     public function edit($id_tanah)
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $tanahModel = new TanahModel();
         $tanah = $tanahModel->find($id_tanah);
 
@@ -100,12 +114,15 @@ class Tanah extends Controller
     }
     public function update($id_tanah)
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $tanahModel = new TanahModel();
         $tanah = $tanahModel->find($id_tanah);
 
         if ($tanah) {
             $data = [
-                'satker' => $this->request->getPost('satker'),
+                'id_satker' => $this->request->getPost('id_satker'),
                 'luas' => $this->request->getPost('luas'),
                 'bidang' => $this->request->getPost('bidang'),
                 'status' => $this->request->getPost('status')
@@ -123,6 +140,9 @@ class Tanah extends Controller
 
     public function delete($id_tanah)
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $tanahModel = new TanahModel();
         $tanah = $tanahModel->find($id_tanah);
 
@@ -139,37 +159,83 @@ class Tanah extends Controller
 
     public function export()
     {
-        // $this->export();
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $tanahModel = new \App\Models\TanahModel();
-        $data = $tanahModel->findAll();
 
-        // Tambahkan filter disini
-        $filter = $this->request->getPost('filter');
-        if ($filter) {
-            $data = $tanahModel->where($filter)->findAll();
+        // Retrieve filters from the query parameters
+        $satker = $this->request->getGet('nama_satker');
+        $status = $this->request->getGet('status');
+
+        // Start with the base query
+        $builder = $tanahModel->builder();
+
+        // If filters are applied, add the necessary conditions
+        if ($satker) {
+            // Use a join to filter by 'nama_satker' from the 'satker' table
+            $builder->join('satker', 'satker.id_satker = tanah.id_satker')
+                ->where('satker.nama_satker', $satker);
         }
 
+        if ($status) {
+            $builder->where('tanah.status', $status);
+        }
+
+        // Get the data (this will apply the filters or return all data if no filters are set)
+        $data = $builder->get()->getResultArray();
+
+        // Create a new spreadsheet
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('A1', 'Nomor');
-        $sheet->setCellValue('B1', 'Satker');
-        $sheet->setCellValue('C1', 'Luas');
-        $sheet->setCellValue('D1', 'Bidang');
-        $sheet->setCellValue('E1', 'Status');
+        // Set the header row
+        $sheet->setCellValue('A1', 'NO');
+        $sheet->setCellValue('B1', 'SATKER/SATWIL');
+        $sheet->setCellValue('C1', 'LUAS TANAH');
+        $sheet->setCellValue('D1', 'BUDANG');
+        $sheet->setCellValue('E1', 'STATUS');
 
+        // Apply styles to the header row
+        $headerStyle = [
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FFFFFF'], // White text color
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => '4CAF50'], // Green background color
+            ],
+        ];
+
+        $sheet->getStyle('A1:E1')->applyFromArray($headerStyle);
+
+        // Write data to the sheet
         $row = 2;
+        $no = 1;
         foreach ($data as $item) {
-            $sheet->setCellValue('A' . $row, $item['id_tanah']);
-            $sheet->setCellValue('B' . $row, $item['satker']);
+            // Since we are joining, 'satker' is available in the data
+            $sheet->setCellValue('A' . $row, $no);
+            $sheet->setCellValue('B' . $row, isset($item['nama_satker']) ? $item['nama_satker'] : ''); // Check if the satker name exists
             $sheet->setCellValue('C' . $row, $item['luas']);
             $sheet->setCellValue('D' . $row, $item['bidang']);
             $sheet->setCellValue('E' . $row, $item['status']);
+
+            $no++;
             $row++;
         }
 
+        // Apply AutoFilter to the header row
+        $sheet->setAutoFilter('A1:E1');
+
+        // Write the file to the browser
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $filename = 'data-' . date('Y-m-d-H-i-s') . '.xlsx';
+        $filename = 'data-tanah-' . date('Y-m-d-H-i-s') . '.xlsx';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
@@ -178,13 +244,14 @@ class Tanah extends Controller
         $writer->save('php://output');
     }
 
-    public function impor()
-    {
-        return view('tanah/impor');
-    }
 
-    public function tampil(): string
+    public function tampil()
     {
-        return view('tanah/tampil');
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
+        $model = new TanahModel();
+        $tanah = $model->findAll();
+        return view('tanah/tampil', ['tanah' => $tanah]);
     }
 }

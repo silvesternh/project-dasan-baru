@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\PengadaanModel;
+use App\Models\SatkerModel;
 use CodeIgniter\Controller;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -11,10 +12,14 @@ class Pengadaan extends Controller
 {
     public function index()
     {
+        if (!auth()->user()->can('ada.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $pengadaanModel = new PengadaanModel();
+        $pengadaan = $pengadaanModel->getPengadaanWithSatker();
         $data = [
             'title' => 'Data pengadaan',
-            'pengadaan' => $pengadaanModel->findAll()
+            'pengadaan' => $pengadaanModel->getPengadaanWithSatker()
         ];
 
         return view('pengadaan/index', $data);
@@ -22,6 +27,9 @@ class Pengadaan extends Controller
 
     public function create()
     {
+        if (!auth()->user()->can('ada.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         // session();
         $data = [
             'title' => 'Tambah pengadaan',
@@ -33,11 +41,14 @@ class Pengadaan extends Controller
 
     public function store()
     {
+        if (!auth()->user()->can('ada.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $validation = \Config\Services::validation();
 
         $rules = [
-            'satker' => [
-                'rules' => 'required[pengadaan.satker]',
+            'id_satker' => [
+                'rules' => 'required[pengadaan.id_satker]',
                 'errors' => [
                     'required' => '{field}  harus diisi.'
                 ]
@@ -69,13 +80,13 @@ class Pengadaan extends Controller
             'mulai_kontrak' => [
                 'rules' => 'required[pengadaan.mulai_kontrak]',
                 'errors' => [
-                    'required' => '{field}  harus diisi.'
+                    'is_unique' => '{field}  tidak boleh sama'
                 ]
             ],
             'akhir_kontrak' => [
                 'rules' => 'required[pengadaan.akhir_kontrak]',
                 'errors' => [
-                    'required' => '{field}  harus diisi.'
+                    'is_unique' => '{field}  tidak boleh sama'
                 ]
             ],
             'penyedia' => [
@@ -89,6 +100,12 @@ class Pengadaan extends Controller
                 'errors' => [
                     'required' => '{field}  harus diisi.'
                 ]
+            ],
+            'tahun' => [
+                'rules' => 'required[pengadaan.tahun]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
             ]
         ];
 
@@ -99,7 +116,7 @@ class Pengadaan extends Controller
 
         $pengadaanModel = new PengadaanModel();
         $data = [
-            'satker' => $this->request->getPost('satker'),
+            'id_satker' => $this->request->getPost('id_satker'),
             'paket' => $this->request->getPost('paket'),
             'pagu' => $this->request->getPost('pagu'),
             'kontrak' => $this->request->getPost('kontrak'),
@@ -107,7 +124,8 @@ class Pengadaan extends Controller
             'mulai_kontrak' => $this->request->getPost('mulai_kontrak'),
             'akhir_kontrak' => $this->request->getPost('akhir_kontrak'),
             'penyedia' => $this->request->getPost('penyedia'),
-            'metode' => $this->request->getPost('metode')
+            'metode' => $this->request->getPost('metode'),
+            'tahun' => $this->request->getPost('tahun')
         ];
 
         $pengadaanModel->insert($data);
@@ -119,6 +137,9 @@ class Pengadaan extends Controller
 
     public function edit($id_pengadaan)
     {
+        if (!auth()->user()->can('ada.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $pengadaanModel = new PengadaanModel();
         $pengadaan = $pengadaanModel->find($id_pengadaan);
 
@@ -135,12 +156,15 @@ class Pengadaan extends Controller
     }
     public function update($id_pengadaan)
     {
+        if (!auth()->user()->can('ada.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $pengadaanModel = new PengadaanModel();
         $pengadaan = $pengadaanModel->find($id_pengadaan);
 
         if ($pengadaan) {
             $data = [
-                'satker' => $this->request->getPost('satker'),
+                'id_satker' => $this->request->getPost('id_satker'),
                 'paket' => $this->request->getPost('paket'),
                 'pagu' => $this->request->getPost('pagu'),
                 'kontrak' => $this->request->getPost('kontrak'),
@@ -148,7 +172,8 @@ class Pengadaan extends Controller
                 'mulai_kontrak' => $this->request->getPost('mulai_kontrak'),
                 'akhir_kontrak' => $this->request->getPost('akhir_kontrak'),
                 'penyedia' => $this->request->getPost('penyedia'),
-                'metode' => $this->request->getPost('metode')
+                'metode' => $this->request->getPost('metode'),
+                'tahun' => $this->request->getPost('tahun')
             ];
 
             $pengadaanModel->update($id_pengadaan, $data);
@@ -163,6 +188,9 @@ class Pengadaan extends Controller
 
     public function delete($id_pengadaan)
     {
+        if (!auth()->user()->can('ada.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $pengadaanModel = new PengadaanModel();
         $pengadaan = $pengadaanModel->find($id_pengadaan);
 
@@ -179,34 +207,80 @@ class Pengadaan extends Controller
 
     public function export()
     {
-        // $this->export();
+        if (!auth()->user()->can('ada.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $pengadaanModel = new \App\Models\PengadaanModel();
-        $data = $pengadaanModel->findAll();
 
-        // Tambahkan filter disini
-        $filter = $this->request->getPost('filter');
-        if ($filter) {
-            $data = $pengadaanModel->where($filter)->findAll();
+        // Retrieve filters from the query parameters
+        $satker = $this->request->getGet('nama_satker');
+        $paket = $this->request->getGet('paket');
+        $penyedia = $this->request->getGet('penyedia');
+
+        // Start with the base query
+        $builder = $pengadaanModel->builder();
+
+        // If filters are applied, add the necessary conditions
+        if ($satker) {
+            // Use a join to filter by 'nama_satker' from the 'satker' table
+            $builder->join('satker', 'satker.id_satker = pengadaan.id_satker')
+                ->where('satker.nama_satker', $satker);
         }
 
+        if ($paket) {
+            $builder->where('pengadaan.paket', $paket);
+        }
+
+        if ($penyedia) {
+            $builder->where('pengadaan.penyedia', $penyedia);
+        }
+
+        // Get the data (this will apply the filters or return all data if no filters are set)
+        $data = $builder->get()->getResultArray();
+
+        // Create a new spreadsheet
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('A1', 'Nomor');
-        $sheet->setCellValue('B1', 'Satker');
-        $sheet->setCellValue('C1', 'Paket');
-        $sheet->setCellValue('D1', 'Pagu');
-        $sheet->setCellValue('E1', 'Kontrak');
-        $sheet->setCellValue('F1', 'Nomor kontrak');
-        $sheet->setCellValue('G1', 'Mulai_kontrak');
-        $sheet->setCellValue('H1', 'Akhir_kontrak');
-        $sheet->setCellValue('I1', 'Penyedia');
-        $sheet->setCellValue('J1', 'Metode');
+        // Set the header row
+        $sheet->setCellValue('A1', 'NO');
+        $sheet->setCellValue('B1', 'SATKER/SATWIL');
+        $sheet->setCellValue('C1', 'JENIS PAKET');
+        $sheet->setCellValue('D1', 'NILAI PAGU');
+        $sheet->setCellValue('E1', 'NILAI KONTRAK');
+        $sheet->setCellValue('F1', 'NOMOR KONTRAK');
+        $sheet->setCellValue('G1', 'TANGGAL MULAI KONTRAK');
+        $sheet->setCellValue('H1', 'TANGGAL AKHIR KONTRAK');
+        $sheet->setCellValue('I1', 'PENYEDIA');
+        $sheet->setCellValue('J1', 'METODE PENGADAAN');
+        $sheet->setCellValue('K1', 'TAHUN');
 
+        // Apply styles to the header row
+        $headerStyle = [
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FFFFFF'], // White text color
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => '4CAF50'], // Green background color
+            ],
+        ];
+
+        $sheet->getStyle('A1:K1')->applyFromArray($headerStyle);
+
+        // Write data to the sheet
         $row = 2;
+        $no = 1;
         foreach ($data as $item) {
-            $sheet->setCellValue('A' . $row, $item['id_pengadaan']);
-            $sheet->setCellValue('B' . $row, $item['satker']);
+            // Since we are joining, 'satker' is available in the data
+            $sheet->setCellValue('A' . $row, $no);
+            $sheet->setCellValue('B' . $row, isset($item['nama_satker']) ? $item['nama_satker'] : ''); // Check if the satker name exists
             $sheet->setCellValue('C' . $row, $item['paket']);
             $sheet->setCellValue('D' . $row, $item['pagu']);
             $sheet->setCellValue('E' . $row, $item['kontrak']);
@@ -215,11 +289,18 @@ class Pengadaan extends Controller
             $sheet->setCellValue('H' . $row, $item['akhir_kontrak']);
             $sheet->setCellValue('I' . $row, $item['penyedia']);
             $sheet->setCellValue('J' . $row, $item['metode']);
+            $sheet->setCellValue('K' . $row, $item['tahun']);
+
+            $no++;
             $row++;
         }
 
+        // Apply AutoFilter to the header row
+        $sheet->setAutoFilter('A1:K1');
+
+        // Write the file to the browser
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $filename = 'data-' . date('Y-m-d-H-i-s') . '.xlsx';
+        $filename = 'data-pengadaan-' . date('Y-m-d-H-i-s') . '.xlsx';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
@@ -228,8 +309,14 @@ class Pengadaan extends Controller
         $writer->save('php://output');
     }
 
-    public function impor()
+
+    public function tampil()
     {
-        return view('pengadaan/impor');
+        if (!auth()->user()->can('ada.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
+        $model = new PengadaanModel();
+        $pengadaan = $model->findAll();
+        return view('pengadaan/tampil', ['pengadaan' => $pengadaan]);
     }
 }

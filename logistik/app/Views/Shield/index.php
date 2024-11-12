@@ -22,10 +22,10 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="card-header">
-                  <a href="<?= base_url(); ?>/admins/new" class="btn btn-primary mr-2"><i class="fas fa-plus"></i>
+                  <a href="<?= base_url(); ?>admins/new" class="btn btn-primary mr-2"><i class="fas fa-plus"></i>
                     Tambah Data</a>
-                  <!-- <a href="<?= base_url(); ?>/anggota/impor" class="btn btn-danger ml-auto"><i class="fas fa-upload"></i></a> -->
-                  <a href="<?= base_url(); ?>/admins/edit_admins/export" class="btn btn-success ml-auto"><i
+                  <!-- <a href="<?= base_url(); ?>anggota/impor" class="btn btn-danger ml-auto"><i class="fas fa-upload"></i></a> -->
+                  <a href="<?= base_url(); ?>admins/edit_admins/export" class="btn btn-success ml-auto"><i
                       class="fas fa-file-export"> Ekspor Data</i></a>
                 </div>
                 <div class="card-body">

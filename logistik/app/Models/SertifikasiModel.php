@@ -9,7 +9,7 @@ class SertifikasiModel extends Model
   protected $table = 'sertifikasi';
   protected $primaryKey = 'id_sertifikasi';
 
-  protected $allowedFields = ['satker', 'nama', 'pangkat', 'nrp', 'jabatan', 'nomor', 'hp'];
+  protected $allowedFields = ['id_satker', 'nama', 'pangkat', 'nrp', 'jabatan', 'nomor', 'hp'];
 
   public function export()
   {
@@ -18,24 +18,10 @@ class SertifikasiModel extends Model
     // ...
   }
 
-  public function filtersertifikasi($postData)
+  public function getSertifikasiWithSatker()
   {
-    $builder = $this->table('sertifikasi');
-    $builder->select('*');
-
-    if ($postData['nama']) {
-      $builder->like('nama', $postData['nama']);
-    }
-
-    if ($postData['pangkat']) {
-      $builder->where('id_pangkat', $postData['pangkat']);
-    }
-
-    if ($postData['jabatan']) {
-      $builder->where('id_jabatan', $postData['jabatan']);
-    }
-
-    $query = $builder->get();
-    return $query->getResult();
+    return $this->select('sertifikasi.*, satker.nama_satker AS nama_satker')
+      ->join('satker', 'satker.id_satker = sertifikasi.id_satker')
+      ->findAll();
   }
 }

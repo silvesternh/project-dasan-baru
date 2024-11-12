@@ -22,10 +22,10 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="card-header">
-                  <a href="<?= base_url(); ?>/anggota/create" class="btn btn-primary mr-2"><i class="fas fa-plus"></i>
+                  <a href="<?= base_url(); ?>anggota/create" class="btn btn-primary mr-2"><i class="fas fa-plus"></i>
                     Tambah Data</a>
-                  <!-- <a href="<?= base_url(); ?>/anggota/impor" class="btn btn-danger ml-auto"><i class="fas fa-upload"></i></a> -->
-                  <a href="<?= base_url(); ?>/anggota/export" class="btn btn-success ml-auto"><i
+                  <!-- <a href="<?= base_url(); ?>anggota/impor" class="btn btn-danger ml-auto"><i class="fas fa-upload"></i></a> -->
+                  <a href="<?= base_url(); ?>anggota/export" class="btn btn-success ml-auto"><i
                       class="fas fa-file-export"> Ekspor Data</i></a>
                 </div>
                 <div class="card-body">
@@ -61,21 +61,55 @@
                                 </tr>
                               </thead>
                               <tbody>
-                                <?php foreach ($anggota as $key => $value): ?>
+                                <?php foreach ($admins as $admin): ?>
                                   <tr>
-                                    <td><?= $key + 1 ?></td>
-                                    <td><?= $value['nama'] ?></td>
-                                    <td><?= $value['pangkat'] ?> | <?= $value['nrp'] ?></td>
-                                    <td><?= $value['jabatan'] ?></td>
-                                    <td><?= $value['foto'] ?></td>
+                                    <td><?= $admin->id ?></td>
+                                    <td><?= $admin->nama ?></td>
+                                    <td><?= $admin->pangkat ?> / <?= $admin->nrp ?></td>
+                                    <td><?php
+                                    switch ($admin->jabatan) {
+                                      case 'sipil':
+                                        echo "Sipil";
+                                        break;
+                                      case 'admin':
+                                        echo "Admin";
+                                        break;
+                                      case 'karolog':
+                                        echo "Karolog";
+                                        break;
+                                      case 'pal':
+                                        echo "Ropal";
+                                        break;
+                                      case 'renmin':
+                                        echo "Bagrenmin";
+                                        break;
+                                      case 'faskon':
+                                        echo "Rofaskon";
+                                        break;
+                                      case 'ada':
+                                        echo "Roada";
+                                        break;
+                                      case 'bekum':
+                                        echo "Robekum";
+                                        break;
+                                      case 'gudang':
+                                        echo "Gudang";
+                                        break;
+                                      default:
+                                        "User";
+                                        break;
+                                    }
+                                    ?>
+                                    </td>
+                                    <td>TBA</td>
                                     <td style="width: 80px;">
-                                      <form action="<?= base_url('anggota/edit/' . $value['id_anggota']) ?>" method="post"
+                                      <form action="<?= base_url('anggota/edit/' . $admin->id) ?>" method="post"
                                         style="display: inline-block;">
                                         <button type="submit" class="btn btn-sm btn-primary" style="padding: 8px 10px;">
                                           <i class="fas fa-edit"></i>
                                         </button>
                                       </form>
-                                      <form action="<?= base_url('anggota/delete/' . $value['id_anggota']) ?>"
+                                      <form action="<?= base_url('anggota/delete/' . $admin->id) ?>"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus data anggota ini?')"
                                         style="display: inline-block;">
                                         <button type="submit" class="btn btn-sm btn-danger" style="padding: 8px 10px;">

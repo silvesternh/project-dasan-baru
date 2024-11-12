@@ -1,11 +1,12 @@
+<?php $user = auth()->user(); ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Rolog</title>
+  <title>Biro Logistik Polda NTB</title>
   <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
-  <link rel="icon" href="<?= base_url(); ?>/assets/img/kaiadmin/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="<?= base_url(); ?>assets/img/kaiadmin/favicon.ico" type="image/x-icon" />
 
   <!-- Fonts and icons -->
   <script src="<?= base_url(); ?>/assets/js/plugin/webfont/webfont.min.js"></script>
@@ -30,16 +31,14 @@
   </script>
 
   <!-- CSS Files -->
-  <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/plugins.min.css" />
-  <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/kaiadmin.min.css" />
-  <link rel="stylesheet"
-    href="<?= base_url(); ?>/https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <link rel="stylesheet"
-    href="<?= base_url(); ?>/https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/plugins.min.css" />
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/kaiadmin.min.css" />
+  <link rel="stylesheet" href="<?= base_url(); ?>https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css">
 
   <!-- CSS Just for demo purpose, don't include it in your project -->
-  <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/demo.css" />
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/demo.css" />
 </head>
 
 <body>
@@ -71,7 +70,7 @@
         <div class="sidebar-content">
           <ul class="nav nav-secondary">
             <li class="nav-item active">
-              <a data-bs-toggle="collapse" href="<?= base_url(); ?>" class="collapsed" aria-expanded="false">
+              <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
                 <i class="fas fa-home"></i>
                 <p>Dashboard</p>
                 <span class="caret"></span>
@@ -79,7 +78,7 @@
               <div class="collapse" id="dashboard">
                 <ul class="nav nav-collapse">
                   <li>
-                    <a href="<?= base_url(); ?>/layout/dashboard">
+                    <a href="<?= base_url('/layout/dashboard'); ?>">
                       <span class="sub-item">Dashboard 1</span>
                     </a>
                   </li>
@@ -94,14 +93,14 @@
             </li>
             <li class="nav-item">
               <a data-bs-toggle="collapse" href="#base">
-                <i class="fas fa-layer-group"></i>
+                <i><img src="<?= base_url(); ?>/assets/img/kaiadmin/R.png" alt="Kendaraan" width="20" height="20"></i>
                 <p>SUBBAGRENMIN</p>
                 <span class="caret"></span>
               </a>
               <div class="collapse" id="base">
                 <ul class="nav nav-collapse">
                   <li>
-                    <a href="<?= base_url(); ?>/anggota/index">
+                    <a href="<?= base_url(); ?>anggota/index">
                       <span class="sub-item">Data Personil</span>
                     </a>
                   </li>
@@ -110,20 +109,30 @@
             </li>
             <li class="nav-item">
               <a data-bs-toggle="collapse" href="#bagpal">
-                <i class="fas fa-th-list"></i>
+                <i><img src="<?= base_url(); ?>/assets/img/kaiadmin/P.png" alt="Kendaraan" width="20" height="20"></i>
                 <p>BAG PAL</p>
                 <span class="caret"></span>
               </a>
               <div class="collapse" id="bagpal">
                 <ul class="nav nav-collapse">
                   <li>
-                    <a href="<?= base_url(); ?>/kendaraan/index">
+                    <a href="<?= base_url(); ?>kendaraan/index">
                       <span class="sub-item">Kendaraan</span>
                     </a>
                   </li>
                   <li>
-                    <a href="<?= base_url(); ?>/icon-menu.html">
-                      <span class="sub-item">Senpi</span>
+                    <a href="<?= base_url(); ?>senpi/index">
+                      <span class="sub-item">Data Senpi</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="<?= base_url(); ?>jenis/index">
+                      <span class="sub-item">Jenis Senpi</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="<?= base_url(); ?>merk/index">
+                      <span class="sub-item">Merk Senpi</span>
                     </a>
                   </li>
                 </ul>
@@ -131,19 +140,19 @@
             </li>
             <li class="nav-item">
               <a data-bs-toggle="collapse" href="#bagada">
-                <i class="fas fa-th-list"></i>
+                <i><img src="<?= base_url(); ?>/assets/img/kaiadmin/A.png" alt="Kendaraan" width="20" height="20"></i>
                 <p>BAG ADA</p>
                 <span class="caret"></span>
               </a>
               <div class="collapse" id="bagada">
                 <ul class="nav nav-collapse">
                   <li>
-                    <a href="<?= base_url(); ?>/sertifikasi/index">
+                    <a href="<?= base_url(); ?>sertifikasi/index">
                       <span class="sub-item">Personil Bersertifikasi</span>
                     </a>
                   </li>
                   <li>
-                    <a href="<?= base_url(); ?>/pengadaan/index">
+                    <a href="<?= base_url(); ?>pengadaan/index">
                       <span class="sub-item">Pengadaan</span>
                     </a>
                   </li>
@@ -152,19 +161,19 @@
             </li>
             <li class="nav-item">
               <a data-bs-toggle="collapse" href="#bagbekum">
-                <i class="fas fa-th-list"></i>
+                <i><img src="<?= base_url(); ?>/assets/img/kaiadmin/B.png" alt="Kendaraan" width="20" height="20"></i>
                 <p>BAG BEKUM</p>
                 <span class="caret"></span>
               </a>
               <div class="collapse" id="bagbekum">
                 <ul class="nav nav-collapse">
                   <li>
-                    <a href="<?= base_url(); ?>/kapor/index">
+                    <a href="<?= base_url(); ?>kapor/index">
                       <span class="sub-item">Kapor</span>
                     </a>
                   </li>
                   <li>
-                    <a href="<?= base_url(); ?>/bbm/index">
+                    <a href="<?= base_url(); ?>bbm/index">
                       <span class="sub-item">Bbm</span>
                     </a>
                   </li>
@@ -173,15 +182,15 @@
             </li>
             <li class="nav-item">
               <a data-bs-toggle="collapse" href="#baginfo">
-                <i class="fas fa-th-list"></i>
+                <i><img src="<?= base_url(); ?>/assets/img/kaiadmin/I.png" alt="Kendaraan" width="20" height="20"></i>
                 <p>BAG INFO</p>
                 <span class="caret"></span>
               </a>
               <div class="collapse" id="baginfo">
                 <ul class="nav nav-collapse">
                   <li>
-                    <a href="<?= base_url(); ?>/kapor/index">
-                      <span class="sub-item">SISISI</span>
+                    <a href="<?= base_url(); ?>">
+                      <span class="sub-item">Info</span>
                     </a>
                   </li>
                 </ul>
@@ -189,19 +198,19 @@
             </li>
             <li class="nav-item">
               <a data-bs-toggle="collapse" href="#bagfaskon">
-                <i class="fas fa-th-list"></i>
+                <i><img src="<?= base_url(); ?>/assets/img/kaiadmin/F.png" alt="Kendaraan" width="20" height="20"></i>
                 <p>BAG FASKON</p>
                 <span class="caret"></span>
               </a>
               <div class="collapse" id="bagfaskon">
                 <ul class="nav nav-collapse">
                   <li>
-                    <a href="<?= base_url(); ?>/tanah/index">
+                    <a href="<?= base_url(); ?>tanah/index">
                       <span class="sub-item">Tanah</span>
                     </a>
                   </li>
                   <li>
-                    <a href="<?= base_url(); ?>/bangunan/index">
+                    <a href="<?= base_url(); ?>bangunan/index">
                       <span class="sub-item">Bangunan</span>
                     </a>
                   </li>
@@ -210,14 +219,14 @@
             </li>
             <li class="nav-item">
               <a data-bs-toggle="collapse" href="#gudang">
-                <i class="fas fa-th-list"></i>
+                <i><img src="<?= base_url(); ?>/assets/img/kaiadmin/G.png" alt="Kendaraan" width="20" height="20"></i>
                 <p>GUDANG</p>
                 <span class="caret"></span>
               </a>
               <div class="collapse" id="gudang">
                 <ul class="nav nav-collapse">
                   <li>
-                    <a href="<?= base_url(); ?>/kapor/index">
+                    <a href="<?= base_url(); ?>stok/index">
                       <span class="sub-item">Stock Opname</span>
                     </a>
                   </li>
@@ -225,16 +234,16 @@
               </div>
             </li>
             <li class="nav-item">
-              <a data-bs-toggle="collapse" href="#base">
-                <i class="fas fa-layer-group"></i>
-                <p>Admins</p>
+              <a data-bs-toggle="collapse" href="#satker">
+                <i><img src="<?= base_url(); ?>/assets/img/kaiadmin/S.png" alt="Kendaraan" width="20" height="20"></i>
+                <p>SATKER</p>
                 <span class="caret"></span>
               </a>
-              <div class="collapse" id="base">
+              <div class="collapse" id="satker">
                 <ul class="nav nav-collapse">
                   <li>
-                    <a href="<?= base_url(); ?>/admins/">
-                      <span class="sub-item">Data Admins</span>
+                    <a href="<?= base_url(); ?>satker/index">
+                      <span class="sub-item">Satker/Satwil</span>
                     </a>
                   </li>
                 </ul>
@@ -500,7 +509,7 @@
                   </div>
                   <span class="profile-username">
                     <span class="op-7">Hi,</span>
-                    <span class="fw-bold">Fikri</span>
+                    <span class="fw-bold"><?= esc($user->username); ?></span>
                   </span>
                 </a>
                 <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -520,9 +529,9 @@
                     </li>
                     <li>
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">My Profile</a>
+                      <!-- <a class="dropdown-item" href="#">My Profile</a>
                       <a class="dropdown-item" href="#">My Balance</a>
-                      <a class="dropdown-item" href="#">Inbox</a>
+                      <a class="dropdown-item" href="#">Inbox</a> -->
                       <div class="dropdown-divider"></div>
                       <a class="dropdown-item" href="#">Account Setting</a>
                       <div class="dropdown-divider"></div>
@@ -645,9 +654,7 @@
   <!-- Kaiadmin JS -->
   <script src="<?= base_url(); ?>/assets/js/kaiadmin.min.js"></script>
 
-  <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-  <script src="<?= base_url(); ?>/assets/js/setting-demo.js"></script>
-  <script src="<?= base_url(); ?>/assets/js/demo.js"></script>
+
   <script>
     $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
       type: "line",

@@ -1,56 +1,170 @@
 <?= $this->extend('layout/index'); ?>
 <?= $this->section('isi'); ?>
 <div class="container">
-    <div class="row">
-        <div class="col">
-        <div class="container">
-          <div class="page-inner">
-            <div class="page-header">
-              <h3 class="fw-bold mb-3">DATA BBM</h3>
-              <ul class="breadcrumbs mb-3">
-                <li class="separator">
-                  <i class="icon-arrow-right"></i>
-                </li>
-              </ul>
-            </div>
-            <a href="/bbm/tambah" class="btn btn-primary">Tambah Data</a><br><br>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4 class="card-title">PENGADAAN BBM POLDA NTB TA 2024</h4>
+  <div class="row">
+    <div class="col">
+      <div class="container">
+        <div class="page-inner">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card-body">
+                <div class="row mb-3">
+                  <!-- Add "Tambah Data" button on the left side -->
+                  <div class="col-md-3 d-flex justify-content-start align-items-center">
+                    <a href="<?= base_url(); ?>bbm/create" class="btn btn-primary">
+                      <i class="fas fa-plus"></i> Tambah
+                    </a>
+                    <a href="">.</a>
+                    <!-- Adding more space between the buttons -->
+                    <a href="<?= base_url(); ?>bbm/export" class="btn btn-success ml-3">
+                      <i class="fas fa-file-export"></i>
+                    </a>
+                    <a href="">.</a>
+                    <!-- New Refresh Button -->
+                    <a href="javascript:void(0);" class="btn btn-danger ml-3" onclick="window.location.reload();">
+                      <i class="fas fa-sync-alt"></i>
+                    </a>
                   </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <div id="basic-datatables_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4"><div class="row"><div class="col-sm-12 col-md-6"><div class="dataTables_length" id="basic-datatables_length"><label>Show <select name="basic-datatables_length" aria-controls="basic-datatables" class="form-control form-control-sm"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> entries</label></div></div><div class="col-sm-12 col-md-6"><div id="basic-datatables_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="basic-datatables"></label></div></div></div><div class="row"><div class="col-sm-12"><table id="basic-datatables" class="display table table-striped table-hover dataTable" role="grid" aria-describedby="basic-datatables_info">
-                      <thead>
-                          <tr>
-                            <th>NO</th>
-                            <th>TRIWULAN</th>
-                            <th>JENIS BBM</th>
-                            <th>JUMLAH</th>
-                            <th>KETERANGAN</th>
-                            <th>AKSI</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>TRIWULAN 1</td>
-                            <td>PERTAMAX</td>
-                            <td>36.500</td>
-                            <td>LITER</td>
-                            <td>Edit | Delete</td>
-                          </tr></tbody>
-                      </table></div></div><div class="row"><div class="col-sm-12 col-md-5"><div class="dataTables_info" id="basic-datatables_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="basic-datatables_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="basic-datatables_previous"><a href="#" aria-controls="basic-datatables" data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="basic-datatables" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="basic-datatables" data-dt-idx="2" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item "><a href="#" aria-controls="basic-datatables" data-dt-idx="3" tabindex="0" class="page-link">3</a></li><li class="paginate_button page-item "><a href="#" aria-controls="basic-datatables" data-dt-idx="4" tabindex="0" class="page-link">4</a></li><li class="paginate_button page-item "><a href="#" aria-controls="basic-datatables" data-dt-idx="5" tabindex="0" class="page-link">5</a></li><li class="paginate_button page-item "><a href="#" aria-controls="basic-datatables" data-dt-idx="6" tabindex="0" class="page-link">6</a></li><li class="paginate_button page-item next" id="basic-datatables_next"><a href="#" aria-controls="basic-datatables" data-dt-idx="7" tabindex="0" class="page-link">Next</a></li></ul></div></div></div></div>
-                    </div>
+
+
+                  <!-- Filter Dropdowns -->
+                  <div class="col-md-3">
+                    <label for="filter-satker">Nama Satker</label>
+                    <select id="filter-satker" name="satker" class="form-control">
+                      <option value="">Semua Satker</option>
+                      <?php foreach (array_unique(array_column($bbm, 'nama_satker')) as $satker): ?>
+                        <option value="<?= $satker ?>"><?= $satker ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label for="filter-tahun">Tahun</label>
+                    <select id="filter-tahun" name="tahun" class="form-control">
+                      <option value="">Semua tahun</option>
+                      <?php foreach (array_unique(array_column($bbm, 'tahun')) as $tahun): ?>
+                        <option value="<?= $tahun ?>"><?= $tahun ?></option>
+                      <?php endforeach; ?>
+                    </select>
                   </div>
                 </div>
+              </div><br>
+              <?php if (session()->getFlashdata('pesan')): ?>
+                <div class="alert alert-success" role="alert">
+                  <?= session()->getFlashdata('pesan'); ?>
+                </div>
+              <?php endif; ?>
+              <!-- Data Table -->
+              <div>
+                <h4>Data BBM</h4>
+              </div>
+              <div class="table-responsive">
+                <table id="basic-datatables" class="table-bordered"
+                  style="font-size: 14px; width: 130%; border: 1px solid #ddd;">
+                  <thead>
+                    <tr style="background-color: #0000FF; height: 35px; text-align: center; color: #FFFFFF;">
+                      <th>No</th>
+                      <th>Satker/Satwil</th>
+                      <th>Pertamax TW 1</th>
+                      <th>Dexlite TW 1</th>
+                      <th>Pertamax TW 2</th>
+                      <th>Dexlite TW 2</th>
+                      <th>Pertamax TW 3</th>
+                      <th>Dexlite TW3</th>
+                      <th>Pertamax TW4</th>
+                      <th>Dexlite TW4</th>
+                      <th>Tahun</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach ($bbm as $key => $value): ?>
+                      <tr>
+                        <td style="text-align: center;"><?= $key + 1 ?></td>
+                        <td><?= $value['nama_satker'] ?></td>
+                        <td><?= $value['p1'] ?></td>
+                        <td><?= $value['d1'] ?></td>
+                        <td><?= $value['p2'] ?></td>
+                        <td><?= $value['d2'] ?></td>
+                        <td><?= $value['p3'] ?></td>
+                        <td><?= $value['d3'] ?></td>
+                        <td><?= $value['p4'] ?></td>
+                        <td><?= $value['d4'] ?></td>
+                        <td><?= $value['tahun'] ?></td>
+                        <td>
+                          <form action="<?= base_url('bbm/edit/' . $value['id_bbm']) ?>" method="post"
+                            style="display: inline-block;">
+                            <button type="submit" class="btn btn-sm btn-primary">
+                              <i class="fas fa-edit"></i>
+                            </button>
+                          </form>
+                          <form action="<?= base_url('bbm/delete/' . $value['id_bbm']) ?>"
+                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus data bbm ini?')"
+                            style="display: inline-block;">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
-        </div>
+      </div>
+      <!-- Scripts -->
+      <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+      <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+      <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+      <script>
+        $(document).ready(function () {
+          // Initialize DataTable with scrollX and language options
+          var table = $('#basic-datatables').DataTable({
+            "scrollX": true,
+            "autoWidth": true,
+            "language": {
+              "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Indonesian.json"
+            }
+          });
+
+          $('#filter-satker').on('change', function () {
+            table.column(1).search(this.value).draw();
+            resetRowNumbers(table);
+          });
+          $('#filter-tahun').on('change', function () {
+            table.column(10).search(this.value).draw();
+            resetRowNumbers(table);
+          });
+
+          // Function to reset row numbers after filtering
+          function resetRowNumbers(table) {
+            table.rows().every(function (rowIdx, tableLoop, rowLoop) {
+              var row = this.node();
+              $('td:eq(0)', row).html(rowIdx + 1); // Set the row number (first column)
+            });
+          }
+
+          // Export data based on filters
+          $('.btn-success').on('click', function (e) { // Make sure the "Ekspor" button is clicked
+            e.preventDefault();
+
+            // Get current filter values
+            const satker = $('#filter-satker').val();
+            const tahun = $('#filter-tahun').val();
+
+            // Construct the export URL with query parameters
+            const exportUrl = `<?= base_url(); ?>/bbm/export?nama_satker=${satker}&tahun=${tahun}`;
+
+            // Trigger download by redirecting to the export URL
+            window.location.href = exportUrl;
+          });
+        });
+      </script>
     </div>
+  </div>
+</div>
 </div>
 <?= $this->endSection(); ?>

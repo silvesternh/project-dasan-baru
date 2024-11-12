@@ -6,17 +6,9 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-$routes->get('/', 'Layout::index');
+$routes->get('/', 'Layout::dashboard');
 service('auth')->routes($routes);
 
-$routes->group('admins', function () use ($routes): void {
-    $routes->get('/', 'Admins::index');
-    $routes->get('new', 'Admins::new');
-    $routes->get('edit/(:num)', 'Admins::edit/$1');
-    $routes->post('/', 'Admins::create');
-    $routes->post('update/(:num)', 'Admins::update/$1');
-    $routes->get('delete/(:num)', 'Admins::delete/$1');
-});
 $routes->get('/layout/index', 'Layout::index');
 $routes->get('/layout/tampil', 'Layout::tampil');
 $routes->get('/layout/dashboard', 'Layout::dashboard');
@@ -34,6 +26,7 @@ $routes->group('anggota', function () use ($routes) {
     $routes->get('export', 'Anggota::export');
     $routes->get('create', 'Anggota::create');
     $routes->get('impor', 'Anggota::impor');
+    $routes->get('edit/(:num)', 'Anggota::edit/$1');
     $routes->post('store', 'Anggota::store');
     $routes->post('prosesImpor', 'Anggota::prosesImpor');
     $routes->post('edit/(:num)', 'Anggota::edit/$1');
@@ -41,8 +34,21 @@ $routes->group('anggota', function () use ($routes) {
     $routes->get('delete/(:num)', 'Anggota::delete/$1');
 });
 
+$routes->group('satker', function () use ($routes) {
+    $routes->get('index', 'Satker::index');
+    $routes->get('export', 'Satker::export');
+    $routes->get('create', 'Satker::create');
+    $routes->get('impor', 'Satker::impor');
+    $routes->post('store', 'Satker::store');
+    $routes->post('prosesImpor', 'Satker::prosesImpor');
+    $routes->post('edit/(:num)', 'Satker::edit/$1');
+    $routes->post('update/(:num)', 'Satker::update/$1');
+    $routes->get('delete/(:num)', 'Satker::delete/$1');
+});
+
 $routes->group('kapor', function () use ($routes) {
     $routes->get('index', 'Kapor::index');
+    $routes->get('tampil', 'Kapor::tampil');
     $routes->get('export', 'Kapor::export');
     $routes->get('create', 'Kapor::create');
     $routes->get('impor', 'Kapor::impor');
@@ -55,6 +61,7 @@ $routes->group('kapor', function () use ($routes) {
 
 $routes->group('pengadaan', function () use ($routes) {
     $routes->get('index', 'Pengadaan::index');
+    $routes->get('tampil', 'Pengadaan::tampil');
     $routes->get('export', 'Pengadaan::export');
     $routes->get('create', 'Pengadaan::create');
     $routes->get('impor', 'Pengadaan::impor');
@@ -67,6 +74,7 @@ $routes->group('pengadaan', function () use ($routes) {
 
 $routes->group('sertifikasi', function () use ($routes) {
     $routes->get('index', 'Sertifikasi::index');
+    $routes->get('tampil', 'Sertifikasi::tampil');
     $routes->get('export', 'Sertifikasi::export');
     $routes->get('create', 'Sertifikasi::create');
     $routes->get('impor', 'Sertifikasi::impor');
@@ -90,9 +98,9 @@ $routes->group('tanah', function () use ($routes) {
     $routes->get('delete/(:num)', 'Tanah::delete/$1');
 });
 
-
 $routes->group('bangunan', function () use ($routes) {
     $routes->get('index', 'Bangunan::index');
+    $routes->get('tampil', 'Bangunan::tampil');
     $routes->get('export', 'Bangunan::export');
     $routes->get('create', 'Bangunan::create');
     $routes->get('impor', 'Bangunan::impor');
@@ -103,8 +111,10 @@ $routes->group('bangunan', function () use ($routes) {
     $routes->get('delete/(:num)', 'Bangunan::delete/$1');
 });
 
+
 $routes->group('kendaraan', function () use ($routes) {
     $routes->get('index', 'Kendaraan::index');
+    $routes->get('tampil', 'Kendaraan::tampil');
     $routes->get('export', 'Kendaraan::export');
     $routes->get('create', 'Kendaraan::create');
     $routes->get('impor', 'Kendaraan::impor');
@@ -114,4 +124,68 @@ $routes->group('kendaraan', function () use ($routes) {
     $routes->post('update/(:num)', 'Kendaraan::update/$1');
     $routes->get('delete/(:num)', 'Kendaraan::delete/$1');
 });
-// $routes->post('Anggota/update', 'Anggota::update');
+
+$routes->group('senpi', function () use ($routes) {
+    $routes->get('index', 'Senpi::index');
+    $routes->get('tampil', 'Senpi::tampil');
+    $routes->get('export', 'Senpi::export');
+    $routes->get('create', 'Senpi::create');
+    $routes->get('impor', 'Senpi::impor');
+    $routes->post('store', 'Senpi::store');
+    $routes->post('prosesImpor', 'Senpi::prosesImpor');
+    $routes->post('edit/(:num)', 'Senpi::edit/$1');
+    $routes->post('update/(:num)', 'Senpi::update/$1');
+    $routes->get('delete/(:num)', 'Senpi::delete/$1');
+});
+
+$routes->group('jenis', function () use ($routes) {
+    $routes->get('index', 'Jenis::index');
+    $routes->get('tampil', 'Jenis::tampil');
+    $routes->get('export', 'Jenis::export');
+    $routes->get('create', 'Jenis::create');
+    $routes->get('impor', 'Jenis::impor');
+    $routes->post('store', 'Jenis::store');
+    $routes->post('prosesImpor', 'Jenis::prosesImpor');
+    $routes->post('edit/(:num)', 'Jenis::edit/$1');
+    $routes->post('update/(:num)', 'Jenis::update/$1');
+    $routes->get('delete/(:num)', 'Jenis::delete/$1');
+});
+
+$routes->group('merk', function () use ($routes) {
+    $routes->get('index', 'Merk::index');
+    $routes->get('tampil', 'Merk::tampil');
+    $routes->get('export', 'Merk::export');
+    $routes->get('create', 'Merk::create');
+    $routes->get('impor', 'Merk::impor');
+    $routes->post('store', 'Merk::store');
+    $routes->post('prosesImpor', 'Merk::prosesImpor');
+    $routes->post('edit/(:num)', 'Merk::edit/$1');
+    $routes->post('update/(:num)', 'Merk::update/$1');
+    $routes->get('delete/(:num)', 'Merk::delete/$1');
+});
+
+$routes->group('bbm', function () use ($routes) {
+    $routes->get('index', 'Bbm::index');
+    $routes->get('tampil', 'Bbm::tampil');
+    $routes->get('export', 'Bbm::export');
+    $routes->get('create', 'Bbm::create');
+    $routes->get('impor', 'Bbm::impor');
+    $routes->post('store', 'Bbm::store');
+    $routes->post('prosesImpor', 'Bbm::prosesImpor');
+    $routes->post('edit/(:num)', 'Bbm::edit/$1');
+    $routes->post('update/(:num)', 'Bbm::update/$1');
+    $routes->get('delete/(:num)', 'Bbm::delete/$1');
+});
+
+$routes->group('stok', function () use ($routes) {
+    $routes->get('index', 'Stok::index');
+    $routes->get('tampil', 'Stok::tampil');
+    $routes->get('export', 'Stok::export');
+    $routes->get('create', 'Stok::create');
+    $routes->get('impor', 'Stok::impor');
+    $routes->post('store', 'Stok::store');
+    $routes->post('prosesImpor', 'Stok::prosesImpor');
+    $routes->post('edit/(:num)', 'Stok::edit/$1');
+    $routes->post('update/(:num)', 'Stok::update/$1');
+    $routes->get('delete/(:num)', 'Stok::delete/$1');
+});

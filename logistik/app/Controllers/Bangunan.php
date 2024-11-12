@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\BangunanModel;
+use App\Models\SatkerModel;
 use CodeIgniter\Controller;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -11,10 +12,14 @@ class Bangunan extends Controller
 {
     public function index()
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $bangunanModel = new BangunanModel();
+        $bangunan = $bangunanModel->getBangunanWithSatker();
         $data = [
             'title' => 'Data bangunan',
-            'bangunan' => $bangunanModel->findAll()
+            'bangunan' => $bangunanModel->getBangunanWithSatker()
         ];
 
         return view('bangunan/index', $data);
@@ -22,6 +27,9 @@ class Bangunan extends Controller
 
     public function create()
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         // session();
         $data = [
             'title' => 'Tambah bangunan',
@@ -33,9 +41,18 @@ class Bangunan extends Controller
 
     public function store()
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $validation = \Config\Services::validation();
 
         $rules = [
+            'id_satker' => [
+                'rules' => 'required[bangunan.id_satker]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
+            ],
             'gedung' => [
                 'rules' => 'required[bangunan.gedung]',
                 'errors' => [
@@ -75,6 +92,7 @@ class Bangunan extends Controller
 
         $bangunanModel = new BangunanModel();
         $data = [
+            'id_satker' => $this->request->getPost('id_satker'),
             'gedung' => $this->request->getPost('gedung'),
             'unit' => $this->request->getPost('unit'),
             'penghuni' => $this->request->getPost('penghuni'),
@@ -91,6 +109,9 @@ class Bangunan extends Controller
 
     public function edit($id_bangunan)
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $bangunanModel = new BangunanModel();
         $bangunan = $bangunanModel->find($id_bangunan);
 
@@ -107,11 +128,15 @@ class Bangunan extends Controller
     }
     public function update($id_bangunan)
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $bangunanModel = new BangunanModel();
         $bangunan = $bangunanModel->find($id_bangunan);
 
         if ($bangunan) {
             $data = [
+                'id_satker' => $this->request->getPost('id_satker'),
                 'gedung' => $this->request->getPost('gedung'),
                 'unit' => $this->request->getPost('unit'),
                 'penghuni' => $this->request->getPost('penghuni'),
@@ -131,6 +156,9 @@ class Bangunan extends Controller
 
     public function delete($id_bangunan)
     {
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $bangunanModel = new BangunanModel();
         $bangunan = $bangunanModel->find($id_bangunan);
 
@@ -147,39 +175,87 @@ class Bangunan extends Controller
 
     public function export()
     {
-        // $this->export();
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $bangunanModel = new \App\Models\BangunanModel();
-        $data = $bangunanModel->findAll();
 
-        // Tambahkan filter disini
-        $filter = $this->request->getPost('filter');
-        if ($filter) {
-            $data = $bangunanModel->where($filter)->findAll();
+        // Retrieve filters from the query parameters
+        $satker = $this->request->getGet('nama_satker');
+        $kondisi = $this->request->getGet('kondisi');
+
+        // Start with the base query
+        $builder = $bangunanModel->builder();
+
+        // If filters are applied, add the necessary conditions
+        if ($satker) {
+            // Use a join to filter by 'nama_satker' from the 'satker' table
+            $builder->join('satker', 'satker.id_satker = bangunan.id_satker')
+                ->where('satker.nama_satker', $satker);
         }
 
+        if ($kondisi) {
+            $builder->where('bangunan.kondisi', $kondisi);
+        }
+
+        // Get the data (this will apply the filters or return all data if no filters are set)
+        $data = $builder->get()->getResultArray();
+
+        // Create a new spreadsheet
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('A1', 'Nomor');
-        $sheet->setCellValue('B1', 'gedung');
-        $sheet->setCellValue('C1', 'unit');
-        $sheet->setCellValue('D1', 'penghuni');
-        $sheet->setCellValue('E1', 'kondisi');
-        $sheet->setCellValue('F1', 'ket');
+        // Set the header row
+        $sheet->setCellValue('A1', 'NO');
+        $sheet->setCellValue('B1', 'SATKER/SATWIL');
+        $sheet->setCellValue('C1', 'JENIS GEDUNG');
+        $sheet->setCellValue('D1', 'JUMLAH UNIT');
+        $sheet->setCellValue('E1', 'NAMA PENGHUNI');
+        $sheet->setCellValue('F1', 'KONDISI');
+        $sheet->setCellValue('G1', 'KETERANGAN');
 
+        // Apply styles to the header row
+        $headerStyle = [
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FFFFFF'], // White text color
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => '4CAF50'], // Green background color
+            ],
+        ];
+
+        $sheet->getStyle('A1:G1')->applyFromArray($headerStyle);
+
+        // Write data to the sheet
         $row = 2;
+        $no = 1;
         foreach ($data as $item) {
-            $sheet->setCellValue('A' . $row, $item['id_bangunan']);
-            $sheet->setCellValue('B' . $row, $item['gedung']);
-            $sheet->setCellValue('C' . $row, $item['unit']);
-            $sheet->setCellValue('D' . $row, $item['penghuni']);
-            $sheet->setCellValue('E' . $row, $item['kondisi']);
-            $sheet->setCellValue('F' . $row, $item['ket']);
+            // Since we are joining, 'satker' is available in the data
+            $sheet->setCellValue('A' . $row, $no);
+            $sheet->setCellValue('B' . $row, isset($item['nama_satker']) ? $item['nama_satker'] : ''); // Check if the satker name exists
+            $sheet->setCellValue('C' . $row, $item['gedung']);
+            $sheet->setCellValue('D' . $row, $item['unit']);
+            $sheet->setCellValue('E' . $row, $item['penghuni']);
+            $sheet->setCellValue('F' . $row, $item['kondisi']);
+            $sheet->setCellValue('G' . $row, $item['ket']);
+
+            $no++;
             $row++;
         }
 
+        // Apply AutoFilter to the header row
+        $sheet->setAutoFilter('A1:G1');
+
+        // Write the file to the browser
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $filename = 'data-' . date('Y-m-d-H-i-s') . '.xlsx';
+        $filename = 'data-bangunan-' . date('Y-m-d-H-i-s') . '.xlsx';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
@@ -188,8 +264,14 @@ class Bangunan extends Controller
         $writer->save('php://output');
     }
 
-    public function impor()
+
+    public function tampil()
     {
-        return view('bangunan/impor');
+        if (!auth()->user()->can('faskon.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
+        $model = new BangunanModel();
+        $bangunan = $model->findAll();
+        return view('bangunan/tampil', ['bangunan' => $bangunan]);
     }
 }

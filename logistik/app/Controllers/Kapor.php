@@ -11,6 +11,9 @@ class Kapor extends Controller
 {
     public function index()
     {
+        if (!auth()->user()->can('bekum.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $kaporModel = new KaporModel();
         $data = [
             'title' => 'Data kapor',
@@ -22,6 +25,9 @@ class Kapor extends Controller
 
     public function create()
     {
+        if (!auth()->user()->can('bekum.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         // session();
         $data = [
             'title' => 'Tambah kapor',
@@ -33,6 +39,9 @@ class Kapor extends Controller
 
     public function store()
     {
+        if (!auth()->user()->can('bekum.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $validation = \Config\Services::validation();
 
         $rules = [
@@ -98,6 +107,9 @@ class Kapor extends Controller
 
     public function edit($id_kapor)
     {
+        if (!auth()->user()->can('bekum.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $kaporModel = new KaporModel();
         $kapor = $kaporModel->find($id_kapor);
 
@@ -114,6 +126,9 @@ class Kapor extends Controller
     }
     public function update($id_kapor)
     {
+        if (!auth()->user()->can('bekum.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $kaporModel = new KaporModel();
         $kapor = $kaporModel->find($id_kapor);
 
@@ -139,6 +154,9 @@ class Kapor extends Controller
 
     public function delete($id_kapor)
     {
+        if (!auth()->user()->can('bekum.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $kaporModel = new KaporModel();
         $kapor = $kaporModel->find($id_kapor);
 
@@ -155,41 +173,84 @@ class Kapor extends Controller
 
     public function export()
     {
-        // $this->export();
-        $kaporModel = new \App\Models\KaporModel();
-        $data = $kaporModel->findAll();
+        if (!auth()->user()->can('bekum.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
+        $kaporModel = new \App\Models\kaporModel();
 
-        // Tambahkan filter disini
-        $filter = $this->request->getPost('filter');
-        if ($filter) {
-            $data = $kaporModel->where($filter)->findAll();
+
+        $nama = $this->request->getGet('nama');
+        $tahun = $this->request->getGet('tahun');
+
+        // Start with the base query
+        $builder = $kaporModel->builder();
+
+
+        if ($nama) {
+            $builder->where('kapor.nama', $nama);
+        }
+        if ($tahun) {
+            $builder->where('kapor.tahun', $tahun);
         }
 
+        // Get the data (this will apply the filters or return all data if no filters are set)
+        $data = $builder->get()->getResultArray();
+
+        // Create a new spreadsheet
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('A1', 'Nomor');
-        $sheet->setCellValue('B1', 'Nama');
-        $sheet->setCellValue('C1', 'Satuan');
-        $sheet->setCellValue('D1', 'Volume');
-        $sheet->setCellValue('E1', 'Harga');
-        $sheet->setCellValue('F1', 'Jumlah');
-        $sheet->setCellValue('G1', 'Tahun');
+        // Set the header row
+        $sheet->setCellValue('A1', 'NO');
+        $sheet->setCellValue('B1', 'NAMA BARANG');
+        $sheet->setCellValue('C1', 'SATUAN');
+        $sheet->setCellValue('D1', 'VOLUME');
+        $sheet->setCellValue('E1', 'HARGA SATUAN');
+        $sheet->setCellValue('F1', 'JUMLAH');
+        $sheet->setCellValue('G1', 'TAHUN');
 
+        // Apply styles to the header row
+        $headerStyle = [
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FFFFFF'], // White text color
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => '4CAF50'], // Green background color
+            ],
+        ];
+
+        $sheet->getStyle('A1:G1')->applyFromArray($headerStyle);
+
+        // Write data to the sheet
         $row = 2;
+        $no = 1;
         foreach ($data as $item) {
-            $sheet->setCellValue('A' . $row, $item['id_kapor']);
+            // Since we are joining, 'satker' is available in the data
+            $sheet->setCellValue('A' . $row, $no);
             $sheet->setCellValue('B' . $row, $item['nama']);
             $sheet->setCellValue('C' . $row, $item['satuan']);
             $sheet->setCellValue('D' . $row, $item['volume']);
             $sheet->setCellValue('E' . $row, $item['harga']);
             $sheet->setCellValue('F' . $row, $item['jumlah']);
             $sheet->setCellValue('G' . $row, $item['tahun']);
+
+            $no++;
             $row++;
         }
 
+        // Apply AutoFilter to the header row
+        $sheet->setAutoFilter('A1:G1');
+
+        // Write the file to the browser
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $filename = 'data-' . date('Y-m-d-H-i-s') . '.xlsx';
+        $filename = 'data-kapor-' . date('Y-m-d-H-i-s') . '.xlsx';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
@@ -198,8 +259,14 @@ class Kapor extends Controller
         $writer->save('php://output');
     }
 
-    public function impor()
+
+    public function tampil()
     {
-        return view('kapor/impor');
+        if (!auth()->user()->can('bekum.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
+        $model = new kaporModel();
+        $kapor = $model->findAll();
+        return view('kapor/tampil', ['kapor' => $kapor]);
     }
 }

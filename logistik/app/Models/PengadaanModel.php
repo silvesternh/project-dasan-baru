@@ -9,7 +9,7 @@ class PengadaanModel extends Model
   protected $table = 'pengadaan';
   protected $primaryKey = 'id_pengadaan';
 
-  protected $allowedFields = ['satker', 'paket', 'pagu', 'kontrak', 'no_kontrak', 'mulai_kontrak', 'akhir_kontrak', 'penyedia', 'metode'];
+  protected $allowedFields = ['id_satker', 'paket', 'pagu', 'kontrak', 'no_kontrak', 'mulai_kontrak', 'akhir_kontrak', 'penyedia', 'metode', 'tahun'];
 
   public function export()
   {
@@ -18,24 +18,10 @@ class PengadaanModel extends Model
     // ...
   }
 
-  public function filterpengadaan($postData)
+  public function getPengadaanWithSatker()
   {
-    $builder = $this->table('pengadaan');
-    $builder->select('*');
-
-    if ($postData['nama']) {
-      $builder->like('nama', $postData['nama']);
-    }
-
-    if ($postData['pangkat']) {
-      $builder->where('id_pangkat', $postData['pangkat']);
-    }
-
-    if ($postData['jabatan']) {
-      $builder->where('id_jabatan', $postData['jabatan']);
-    }
-
-    $query = $builder->get();
-    return $query->getResult();
+    return $this->select('pengadaan.*, satker.nama_satker AS nama_satker')
+      ->join('satker', 'satker.id_satker = pengadaan.id_satker')
+      ->findAll();
   }
 }

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\KendaraanModel;
+use App\Models\SatkerModel;
 use CodeIgniter\Controller;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -11,10 +12,14 @@ class Kendaraan extends Controller
 {
     public function index()
     {
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $kendaraanModel = new KendaraanModel();
+        $kendaraan = $kendaraanModel->getKendaraanWithSatker();
         $data = [
             'title' => 'Data kendaraan',
-            'kendaraan' => $kendaraanModel->findAll()
+            'kendaraan' => $kendaraanModel->getKendaraanWithSatker()
         ];
 
         return view('kendaraan/index', $data);
@@ -22,6 +27,9 @@ class Kendaraan extends Controller
 
     public function create()
     {
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         // session();
         $data = [
             'title' => 'Tambah kendaraan',
@@ -33,11 +41,14 @@ class Kendaraan extends Controller
 
     public function store()
     {
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $validation = \Config\Services::validation();
 
         $rules = [
-            'satker' => [
-                'rules' => 'required[kendaraan.satker]',
+            'id_satker' => [
+                'rules' => 'required[kendaraan.id_satker]',
                 'errors' => [
                     'required' => '{field}  harus diisi.'
                 ]
@@ -86,6 +97,12 @@ class Kendaraan extends Controller
                     'required' => '{field}  harus diisi.'
                 ]
             ],
+            'roda' => [
+                'rules' => 'required[kendaraan.roda]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
+            ],
             'pemegang' => [
                 'rules' => 'required[kendaraan.pemegang]',
                 'errors' => [
@@ -120,7 +137,7 @@ class Kendaraan extends Controller
 
         $kendaraanModel = new KendaraanModel();
         $data = [
-            'satker' => $this->request->getPost('satker'),
+            'id_satker' => $this->request->getPost('id_satker'),
             'nopol' => $this->request->getPost('nopol'),
             'jenis' => $this->request->getPost('jenis'),
             'merk' => $this->request->getPost('merk'),
@@ -128,6 +145,7 @@ class Kendaraan extends Controller
             'mesin' => $this->request->getPost('mesin'),
             'rangka' => $this->request->getPost('rangka'),
             'kondisi' => $this->request->getPost('kondisi'),
+            'roda' => $this->request->getPost('roda'),
             'pemegang' => $this->request->getPost('pemegang'),
             'pangkat' => $this->request->getPost('pangkat'),
             'nrp' => $this->request->getPost('nrp'),
@@ -143,6 +161,9 @@ class Kendaraan extends Controller
 
     public function edit($id_kendaraan)
     {
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $kendaraanModel = new KendaraanModel();
         $kendaraan = $kendaraanModel->find($id_kendaraan);
 
@@ -159,12 +180,15 @@ class Kendaraan extends Controller
     }
     public function update($id_kendaraan)
     {
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $kendaraanModel = new KendaraanModel();
         $kendaraan = $kendaraanModel->find($id_kendaraan);
 
         if ($kendaraan) {
             $data = [
-                'satker' => $this->request->getPost('satker'),
+                'id_satker' => $this->request->getPost('id_satker'),
                 'nopol' => $this->request->getPost('nopol'),
                 'jenis' => $this->request->getPost('jenis'),
                 'merk' => $this->request->getPost('merk'),
@@ -172,6 +196,7 @@ class Kendaraan extends Controller
                 'mesin' => $this->request->getPost('mesin'),
                 'rangka' => $this->request->getPost('rangka'),
                 'kondisi' => $this->request->getPost('kondisi'),
+                'roda' => $this->request->getPost('roda'),
                 'pemegang' => $this->request->getPost('pemegang'),
                 'pangkat' => $this->request->getPost('pangkat'),
                 'nrp' => $this->request->getPost('nrp'),
@@ -190,6 +215,9 @@ class Kendaraan extends Controller
 
     public function delete($id_kendaraan)
     {
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $kendaraanModel = new KendaraanModel();
         $kendaraan = $kendaraanModel->find($id_kendaraan);
 
@@ -206,37 +234,83 @@ class Kendaraan extends Controller
 
     public function export()
     {
-        // $this->export();
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
         $kendaraanModel = new \App\Models\KendaraanModel();
-        $data = $kendaraanModel->findAll();
 
-        // Tambahkan filter disini
-        $filter = $this->request->getPost('filter');
-        if ($filter) {
-            $data = $kendaraanModel->where($filter)->findAll();
+        // Retrieve filters from the query parameters
+        $satker = $this->request->getGet('nama_satker');
+        $roda = $this->request->getGet('roda');
+        $kondisi = $this->request->getGet('kondisi');
+
+        // Start with the base query
+        $builder = $kendaraanModel->builder();
+
+        // If filters are applied, add the necessary conditions
+        if ($satker) {
+            // Use a join to filter by 'nama_satker' from the 'satker' table
+            $builder->join('satker', 'satker.id_satker = kendaraan.id_satker')
+                ->where('satker.nama_satker', $satker);
         }
 
+        if ($roda) {
+            $builder->where('kendaraan.roda', $roda);
+        }
+
+        if ($kondisi) {
+            $builder->where('kendaraan.kondisi', $kondisi);
+        }
+
+        // Get the data (this will apply the filters or return all data if no filters are set)
+        $data = $builder->get()->getResultArray();
+
+        // Create a new spreadsheet
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('A1', 'Nomor');
-        $sheet->setCellValue('B1', 'satker');
-        $sheet->setCellValue('C1', 'nopol');
-        $sheet->setCellValue('D1', 'jenis');
-        $sheet->setCellValue('E1', 'merk');
-        $sheet->setCellValue('F1', 'tahun');
-        $sheet->setCellValue('G1', 'mesin');
-        $sheet->setCellValue('H1', 'rangka');
-        $sheet->setCellValue('I1', 'kondisi');
-        $sheet->setCellValue('J1', 'pemegang');
-        $sheet->setCellValue('K1', 'pangkat');
-        $sheet->setCellValue('L1', 'nrp');
-        $sheet->setCellValue('M1', 'jabatan');
+        // Set the header row
+        $sheet->setCellValue('A1', 'NO');
+        $sheet->setCellValue('B1', 'SATKER/SATWIL');
+        $sheet->setCellValue('C1', 'NOPOL');
+        $sheet->setCellValue('D1', 'JENIS KENDARAAN');
+        $sheet->setCellValue('E1', 'TYPE/MERK');
+        $sheet->setCellValue('F1', 'TAHUN PEMBUATAN');
+        $sheet->setCellValue('G1', 'NOMOR MESIN');
+        $sheet->setCellValue('H1', 'NOMOR RANGKA');
+        $sheet->setCellValue('I1', 'KONDISI');
+        $sheet->setCellValue('J1', 'RODA');
+        $sheet->setCellValue('K1', 'NAMA PEMEGANG');
+        $sheet->setCellValue('L1', 'PANGKAT');
+        $sheet->setCellValue('M1', 'NRP');
+        $sheet->setCellValue('N1', 'JABATAN');
 
+        // Apply styles to the header row
+        $headerStyle = [
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FFFFFF'], // White text color
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => '4CAF50'], // Green background color
+            ],
+        ];
+
+        $sheet->getStyle('A1:N1')->applyFromArray($headerStyle);
+
+        // Write data to the sheet
         $row = 2;
+        $no = 1;
         foreach ($data as $item) {
-            $sheet->setCellValue('A' . $row, $item['id_kendaraan']);
-            $sheet->setCellValue('B' . $row, $item['satker']);
+            // Since we are joining, 'satker' is available in the data
+            $sheet->setCellValue('A' . $row, $no);
+            $sheet->setCellValue('B' . $row, isset($item['nama_satker']) ? $item['nama_satker'] : ''); // Check if the satker name exists
             $sheet->setCellValue('C' . $row, $item['nopol']);
             $sheet->setCellValue('D' . $row, $item['jenis']);
             $sheet->setCellValue('E' . $row, $item['merk']);
@@ -244,15 +318,22 @@ class Kendaraan extends Controller
             $sheet->setCellValue('G' . $row, $item['mesin']);
             $sheet->setCellValue('H' . $row, $item['rangka']);
             $sheet->setCellValue('I' . $row, $item['kondisi']);
-            $sheet->setCellValue('J' . $row, $item['pemegang']);
-            $sheet->setCellValue('K' . $row, $item['pangkat']);
-            $sheet->setCellValue('L' . $row, $item['nrp']);
-            $sheet->setCellValue('M' . $row, $item['jabatan']);
+            $sheet->setCellValue('J' . $row, $item['roda']);
+            $sheet->setCellValue('K' . $row, $item['pemegang']);
+            $sheet->setCellValue('L' . $row, $item['pangkat']);
+            $sheet->setCellValue('M' . $row, $item['nrp']);
+            $sheet->setCellValue('N' . $row, $item['jabatan']);
+
+            $no++;
             $row++;
         }
 
+        // Apply AutoFilter to the header row
+        $sheet->setAutoFilter('A1:N1');
+
+        // Write the file to the browser
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $filename = 'data-' . date('Y-m-d-H-i-s') . '.xlsx';
+        $filename = 'data-kendaraan-' . date('Y-m-d-H-i-s') . '.xlsx';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
@@ -261,8 +342,14 @@ class Kendaraan extends Controller
         $writer->save('php://output');
     }
 
-    public function impor()
+
+    public function tampil()
     {
-        return view('kendaraan/impor');
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
+        $model = new KendaraanModel();
+        $kendaraan = $model->findAll();
+        return view('kendaraan/tampil', ['kendaraan' => $kendaraan]);
     }
 }
