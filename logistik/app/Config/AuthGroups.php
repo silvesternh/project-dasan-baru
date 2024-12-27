@@ -50,28 +50,32 @@ class AuthGroups extends ShieldAuthGroups
             'description' => 'Kepala Biro Logistik.',
         ],
         'pal' => [
-            'title' => 'Ropal',
+            'title' => 'Bagpal',
             'description' => 'Biro Peralatan.',
         ],
         'renmin' => [
-            'title' => 'Bagrenmin',
+            'title' => 'Subbagrenmin',
             'description' => 'Bagian Perencanaan & Administrasi.',
         ],
         'faskon' => [
-            'title' => 'Rofaskon',
+            'title' => 'bagfaskon',
             'description' => 'Biro Fasilitas & Konstruksi.',
         ],
         'ada' => [
-            'title' => 'Roada',
+            'title' => 'Bagada',
             'description' => 'Biro Pengadaan Barang/Jasa.',
         ],
         'bekum' => [
-            'title' => 'Robekum',
+            'title' => 'Bagbekum',
             'description' => 'Biro Perbekalan Umum.',
         ],
         'gudang' => [
             'title' => 'Gudang',
             'description' => 'Gudang.',
+        ],
+        'infolog' => [
+            'title' => 'Infolog',
+            'description' => 'infolog.',
         ],
         'sipil' => [
             'title' => 'Sipil',
@@ -96,6 +100,7 @@ class AuthGroups extends ShieldAuthGroups
         'ada.access' => 'Dapat mengakses halaman ada',
         'bekum.access' => 'Dapat mengakses halaman bekum',
         'gudang.access' => 'Dapat mengakses halaman gudang',
+        'infolog.access' => 'Dapat mengakses halaman infolog',
         'sipil.access' => 'Dapat mengakses halaman sipil',
         'user.access' => 'Dapat mengakses halaman user',
     ];
@@ -117,6 +122,7 @@ class AuthGroups extends ShieldAuthGroups
             'ada.access',
             'bekum.access',
             'gudang.access',
+            'infolog.access',
             'sipil.access',
             'user.access',
         ],
@@ -127,6 +133,7 @@ class AuthGroups extends ShieldAuthGroups
             'ada.access',
             'bekum.access',
             'gudang.access',
+            'infolog.access',
         ],
         'pal' => [
             'pal.access',
@@ -145,6 +152,9 @@ class AuthGroups extends ShieldAuthGroups
         ],
         'gudang' => [
             'gudang.access',
+        ],
+        'infolog' => [
+            'infolog.access',
         ],
     ];
 }

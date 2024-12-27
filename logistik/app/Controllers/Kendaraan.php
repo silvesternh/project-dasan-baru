@@ -24,6 +24,21 @@ class Kendaraan extends Controller
 
         return view('kendaraan/index', $data);
     }
+    
+    public function data()
+    {
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
+        $kendaraanModel = new KendaraanModel();
+        $kendaraan = $kendaraanModel->getKendaraanWithSatker();
+        $data = [
+            'title' => 'Data kendaraan',
+            'kendaraan' => $kendaraanModel->getKendaraanWithSatker()
+        ];
+
+        return view('kendaraan/data', $data);
+    }
 
     public function create()
     {
@@ -116,10 +131,9 @@ class Kendaraan extends Controller
                 ]
             ],
             'nrp' => [
-                'rules' => 'required|is_unique[kendaraan.nrp]',
+                'rules' => 'required[kendaraan.nrp]',
                 'errors' => [
-                    'required' => '{field}  harus diisi.',
-                    'is_unique' => '{field}  tidak boleh sama'
+                    'required' => '{field}  harus diisi.'
                 ]
             ],
             'jabatan' => [

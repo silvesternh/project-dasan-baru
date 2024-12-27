@@ -9,7 +9,7 @@ class StokModel extends Model
   protected $table = 'stok';
   protected $primaryKey = 'id_stok';
 
-  protected $allowedFields = ['kode', 'uraian', 'jumlah', 'keluar', 'masuk', 'sisa', 'ket'];
+  protected $allowedFields = ['uraian', 'satuan', 'jumlah'];
 
   public function export()
   {

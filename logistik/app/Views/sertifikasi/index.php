@@ -58,10 +58,9 @@
                       <th>Satker/Satwil</th>
                       <th>Nama Personil</th>
                       <th>pangkat</th>
-                      <th>NRP</th>
+                      <th>NRP/NIP</th>
                       <th>Jabatan</th>
                       <th>Nomor Sertifikasi</th>
-                      <th>Nomor Hp</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -75,7 +74,6 @@
                         <td><?= $value['nrp'] ?></td>
                         <td><?= $value['jabatan'] ?></td>
                         <td><?= $value['nomor'] ?></td>
-                        <td><?= $value['hp'] ?></td>
                         <td>
                           <form action="<?= base_url('sertifikasi/edit/' . $value['id_sertifikasi']) ?>" method="post"
                             style="display: inline-block;">

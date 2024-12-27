@@ -4,67 +4,15 @@
     <div class="page-inner">
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
-                <a href="<?= base_url(); ?>layout/dashboard">Kembali</a>
+                <a href="<?= base_url(); ?>layout/dfaskon" class="btn btn-danger"><i class="fas fa-arrow-left"></i> Kembali</a>
             </div>
         </div>
         <h4>Data Bangunan</h4>
 
-        <!-- Data Keseluruhan: Counting Kondisi -->
+        <!-- Data Satker -->
         <div class="alert alert-danger" role="alert">
-            <h6><b>Data Keseluruhan</b></h6>
-            <table>
-                <tr>
-                    <th class="bg-danger">Gedung</th>
-                    <th class="bg-danger">Kondisi</th>
-                    <th class="bg-danger">Jumlah</th>
-                </tr>
-                <?php
-                // Initialize an array to store kondisi counts by gedung
-                $kondisiCounts = array();
-                $totalKondisi = 0; // Variable for total count of kondisi
-                
-                // Loop through bangunan data
-                foreach ($bangunan as $value) {
-                    $gedung = $value['gedung']; // 'gedung' should be the column name from your dataset
-                    $kondisi = $value['kondisi']; // 'kondisi' should be the column name from your dataset
-                
-                    // Initialize the array for the building if not already initialized
-                    if (!isset($kondisiCounts[$gedung])) {
-                        $kondisiCounts[$gedung] = array();
-                    }
-
-                    // Initialize the count for the condition if not already initialized
-                    if (!isset($kondisiCounts[$gedung][$kondisi])) {
-                        $kondisiCounts[$gedung][$kondisi] = 0;
-                    }
-
-                    // Increment the count for the given condition
-                    $kondisiCounts[$gedung][$kondisi]++;
-                    $totalKondisi++; // Add 1 to the total kondisi
-                }
-
-                // Display the counts for each Gedung and Kondisi
-                foreach ($kondisiCounts as $gedung => $kondisiData) {
-                    foreach ($kondisiData as $kondisi => $count) {
-                        echo '<tr>';
-                        echo '<td>' . htmlspecialchars($gedung) . '</td>';
-                        echo '<td>' . htmlspecialchars($kondisi) . '</td>';
-                        echo '<td>' . $count . '</td>';
-                        echo '</tr>';
-                    }
-                }
-                ?>
-                <tr>
-                    <th><b>Total Bangunan</b></th>
-                    <th><b></b></th> <!-- Empty cell for the 'Kondisi' column -->
-                    <th><b><?php echo $totalKondisi; ?></b></th>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Data Persatker / Satwil: Group by Satker, Gedung, and Kondisi -->
-        <div class="alert alert-primary" role="alert">
-            <h6><b>Data Persatker / Satwil</b></h6>
+            <h6><b>Data Satker</b></h6>
+            <input type="text" id="searchSatkerInput" onkeyup="searchSatker()" placeholder="Cari Satker..." class="form-control mb-2">
             <style>
                 table {
                     border-collapse: collapse;
@@ -82,63 +30,133 @@
                 th {
                     background-color: #f0f0f0;
                 }
+
+                .bg-danger {
+                    background-color: #dc3545;
+                    color: white;
+                }
             </style>
-            <table>
-                <?php
+            <table id="satkerTable">
+                <thead class="table-danger">
+                    <tr>
+                        <th>No</th>
+                        <th>Satker</th>
+                        <th>Jumlah</th>
+                        <th>Ket</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
 
-                use App\Models\BangunanModel;
+                    use App\Models\BangunanModel;
 
-                $bangunanModel = new BangunanModel();
-                $bangunanWithSatker = $bangunanModel->getBangunanWithSatker();
-                $kondisiCounts = [];
+                    $bangunanModel = new BangunanModel();
+                    $bangunanWithSatker = $bangunanModel->getBangunanWithSatker();
+                    $satkerCounts = [];
+                    $totalSatker = 0;
+                    $no = 1; // Serial number starts at 1
 
-                if ($bangunanWithSatker) {
-                    foreach ($bangunanWithSatker as $value) {
-                        if (isset($value['nama_satker'], $value['gedung'], $value['kondisi'])) {
-                            $satker = $value['nama_satker']; // Get satker name from the join
-                            $gedung = $value['gedung'];
-                            $kondisi = $value['kondisi'];
-
-                            $kondisiCounts[$satker][$gedung][$kondisi] = ($kondisiCounts[$satker][$gedung][$kondisi] ?? 0) + 1;
+                    if (!empty($bangunanWithSatker)) {
+                        foreach ($bangunanWithSatker as $value) {
+                            $satker = $value['nama_satker'] ?? 'Tidak Diketahui';
+                            $satkerCounts[$satker][] = $value; // Store details of buildings by satker
+                            $totalSatker++;
                         }
-                    }
-                }
 
-                // Loop through the data and display the results
-                foreach ($kondisiCounts as $satker => $gedungData) {
-                    echo '<tr>';
-                    echo '<th colspan="4" style="text-align: center;" class="bg-primary">' . htmlspecialchars($satker) . '</th>';
-                    echo '</tr>';
-
-                    // Display each gedung
-                    foreach ($gedungData as $gedung => $kondisiData) {
-                        echo '<tr>';
-                        echo '<th colspan="2" class="table-secondary">' . htmlspecialchars($gedung) . '</th>';
-                        echo '</tr>';
-
-                        // Display kondisi for each gedung
-                        $totalKondisiGedung = 0; // Variable to hold the total kondisi per gedung
-                        foreach ($kondisiData as $kondisi => $count) {
+                        foreach ($satkerCounts as $satker => $details) {
                             echo '<tr>';
-                            echo '<td>' . htmlspecialchars($kondisi) . '</td>';
-                            echo '<td>' . $count . '</td>';
+                            echo '<td>' . $no++ . '</td>'; // Display serial number
+                            echo '<td>' . htmlspecialchars($satker) . '</td>';
+                            echo '<td>' . count($details) . '</td>';
+                            echo '<td><button class="btn btn-info btn-sm" onclick="showDetail(\'' . htmlspecialchars($satker) . '\')">Detail</button></td>';
                             echo '</tr>';
-                            $totalKondisiGedung += $count; // Add to the total for this gedung
                         }
-
-                        // Total for each gedung
-                        echo '<tr>';
-                        echo '<th>Total Semua Kondisi ' . htmlspecialchars($gedung) . '</th>';
-                        echo '<th>' . $totalKondisiGedung . '</th>';
-                        echo '</tr>';
-                        echo '<tr style="height: 10px;"></tr>'; // Space between gedungs
+                    } else {
+                        echo '<tr><td colspan="4">Data tidak ditemukan.</td></tr>';
                     }
-
-                    echo '<tr style="height: 10px;"></tr>'; // Space between satkers
-                }
-                ?>
+                    ?>
+                    <tr>
+                        <th colspan="2"><b>Jumlah Bangunan</b></th>
+                        <th><b><?= $totalSatker; ?></b></th>
+                        <th></th>
+                    </tr>
+                </tbody>
             </table>
         </div>
+
+        <!-- Modal for Detail -->
+        <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Data Bangunan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id="modalSatkerName"></h6>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Gedung</th>
+                                    <th>Kondisi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalDetailContent"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const bangunanData = <?= json_encode($satkerCounts); ?>; // Sending building data to JavaScript
+
+            function showDetail(satker) {
+                const modalContent = document.getElementById('modalDetailContent');
+                const satkerName = document.getElementById('modalSatkerName');
+
+                modalContent.innerHTML = ''; // Clear modal content
+                satkerName.textContent = satker; // Display satker name
+
+                const details = bangunanData[satker];
+                if (details && details.length > 0) {
+                    details.forEach((item, index) => {
+                        modalContent.innerHTML += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${item.gedung ?? 'Tidak Diketahui'}</td>
+                                <td>${item.kondisi ?? 'Tidak Diketahui'}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    modalContent.innerHTML = '<tr><td colspan="3">Data tidak ditemukan.</td></tr>';
+                }
+
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                modal.show();
+            }
+
+            function searchSatker() {
+                const input = document.getElementById('searchSatkerInput');
+                const filter = input.value.toUpperCase();
+                const table = document.getElementById('satkerTable');
+                const tr = table.getElementsByTagName('tr');
+
+                for (let i = 0; i < tr.length; i++) {
+                    const td = tr[i].getElementsByTagName('td')[1]; // Satker column is index 1
+                    if (td) {
+                        const txtValue = td.textContent || td.innerText;
+                        tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+                    }
+                }
+            }
+        </script>
     </div>
 </div>
 <?= $this->endSection(); ?>

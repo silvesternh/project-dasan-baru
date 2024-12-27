@@ -27,6 +27,22 @@ class Senpi extends Controller
 
         return view('senpi/index', $data);
     }
+    
+    public function data()
+    {
+        if (!auth()->user()->can('pal.access')) {
+            return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
+        }
+        $senpiModel = new SenpiModel();
+        $senpi = $senpiModel->getSenpiWithDetails();
+
+        $data = [
+            'title' => 'Data senpi',
+            'senpi' => $senpi
+        ];
+
+        return view('senpi/data', $data);
+    }
 
     public function create()
     {
@@ -56,24 +72,6 @@ class Senpi extends Controller
                     'required' => '{field}  harus diisi.'
                 ]
             ],
-            'nama' => [
-                'rules' => 'required[senpi.nama]',
-                'errors' => [
-                    'required' => '{field}  harus diisi.'
-                ]
-            ],
-            'pangkat' => [
-                'rules' => 'required[senpi.pangkat]',
-                'errors' => [
-                    'required' => '{field}  harus diisi.'
-                ]
-            ],
-            'nrp' => [
-                'rules' => 'required[senpi.nrp]',
-                'errors' => [
-                    'required' => '{field}  harus diisi.'
-                ]
-            ],
             'id_jenis' => [
                 'rules' => 'required[senpi.id_jenis]',
                 'errors' => [
@@ -86,21 +84,50 @@ class Senpi extends Controller
                     'required' => '{field}  harus diisi.'
                 ]
             ],
-            'no_senpi' => [
-                'rules' => 'required|is_unique[senpi.no_senpi]',
-                'errors' => [
-                    'required' => '{field}  harus diisi.',
-                    'is_unique' => '{field}  tidak boleh sama'
-                ]
-            ],
-            'kondisi' => [
-                'rules' => 'required[senpi.kondisi]',
+            'jumlah' => [
+                'rules' => 'required[senpi.jumlah]',
                 'errors' => [
                     'required' => '{field}  harus diisi.'
                 ]
             ],
-            'kode' => [
-                'rules' => 'required[senpi.kode]',
+            'baik' => [
+                'rules' => 'required[senpi.baik]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
+            ],
+            'rr' => [
+                'rules' => 'required[senpi.rr]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
+            ],
+            'rb' => [
+                'rules' => 'required[senpi.rb]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
+            ],
+            'polres' => [
+                'rules' => 'required[senpi.polres]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
+            ],
+            'polsek' => [
+                'rules' => 'required[senpi.polsek]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
+            ],
+            'gudang' => [
+                'rules' => 'required[senpi.gudang]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
+            ],
+            'ket' => [
+                'rules' => 'required[senpi.ket]',
                 'errors' => [
                     'required' => '{field}  harus diisi.'
                 ]
@@ -115,14 +142,16 @@ class Senpi extends Controller
         $senpiModel = new SenpiModel();
         $data = [
             'id_satker' => $this->request->getPost('id_satker'),
-            'nama' => $this->request->getPost('nama'),
-            'pangkat' => $this->request->getPost('pangkat'),
-            'nrp' => $this->request->getPost('nrp'),
             'id_jenis' => $this->request->getPost('id_jenis'),
             'id_merk' => $this->request->getPost('id_merk'),
-            'no_senpi' => $this->request->getPost('no_senpi'),
-            'kondisi' => $this->request->getPost('kondisi'),
-            'kode' => $this->request->getPost('kode')
+            'jumlah' => $this->request->getPost('jumlah'),
+            'baik' => $this->request->getPost('baik'),
+            'rr' => $this->request->getPost('rr'),
+            'rb' => $this->request->getPost('rb'),
+            'polres' => $this->request->getPost('polres'),
+            'polsek' => $this->request->getPost('polsek'),
+            'gudang' => $this->request->getPost('gudang'),
+            'ket' => $this->request->getPost('ket')
         ];
 
         $senpiModel->insert($data);
@@ -162,14 +191,16 @@ class Senpi extends Controller
         if ($senpi) {
             $data = [
                 'id_satker' => $this->request->getPost('id_satker'),
-                'nama' => $this->request->getPost('nama'),
-                'pangkat' => $this->request->getPost('pangkat'),
-                'nrp' => $this->request->getPost('nrp'),
                 'id_jenis' => $this->request->getPost('id_jenis'),
                 'id_merk' => $this->request->getPost('id_merk'),
-                'no_senpi' => $this->request->getPost('no_senpi'),
-                'kondisi' => $this->request->getPost('kondisi'),
-                'kode' => $this->request->getPost('kode')
+                'jumlah' => $this->request->getPost('jumlah'),
+                'baik' => $this->request->getPost('baik'),
+                'rr' => $this->request->getPost('rr'),
+                'rb' => $this->request->getPost('rb'),
+                'polres' => $this->request->getPost('polres'),
+                'polsek' => $this->request->getPost('polsek'),
+                'gudang' => $this->request->getPost('gudang'),
+                'ket' => $this->request->getPost('ket')
             ];
 
             $senpiModel->update($id_senpi, $data);
@@ -241,14 +272,17 @@ class Senpi extends Controller
         // Set headers
         $sheet->setCellValue('A1', 'NO');
         $sheet->setCellValue('B1', 'SATKER/SATWIL');
-        $sheet->setCellValue('C1', 'PENANGGUNG JAWAB');
-        $sheet->setCellValue('D1', 'PANGKAT');
-        $sheet->setCellValue('E1', 'NRP');
-        $sheet->setCellValue('F1', 'JENIS SENPI');
-        $sheet->setCellValue('G1', 'MERK SENPI');
-        $sheet->setCellValue('H1', 'NOMOR SENPI');
-        $sheet->setCellValue('I1', 'KONDISI');
-        $sheet->setCellValue('J1', 'KODE');
+        $sheet->setCellValue('C1', 'JENIS SENPI');
+        $sheet->setCellValue('D1', 'MERK SENPI');
+        $sheet->setCellValue('E1', 'JUMLAH');
+        $sheet->setCellValue('F1', 'BAIK');
+        $sheet->setCellValue('G1', 'RUSAK RINGAN');
+        $sheet->setCellValue('H1', 'RUSAK BERAT');
+        $sheet->setCellValue('I1', 'POLRES');
+        $sheet->setCellValue('J1', 'POLSEK');
+        $sheet->setCellValue('K1', 'GUDANG');
+        $sheet->setCellValue('L1', 'JUMLAH');
+        $sheet->setCellValue('M1', 'KETERANGAN');
 
         // Apply header styling if needed
 
@@ -258,21 +292,23 @@ class Senpi extends Controller
         foreach ($data as $item) {
             $sheet->setCellValue('A' . $row, $no);
             $sheet->setCellValue('B' . $row, $item['nama_satker'] ?? '');
-            $sheet->setCellValue('C' . $row, $item['nama']);
-            $sheet->setCellValue('D' . $row, $item['pangkat']);
-            $sheet->setCellValue('E' . $row, $item['nrp']);
-            $sheet->setCellValue('F' . $row, $item['nama_jenis'] ?? '');
-            $sheet->setCellValue('G' . $row, $item['nama_merk'] ?? '');
-            $sheet->setCellValue('H' . $row, $item['no_senpi']);
-            $sheet->setCellValue('I' . $row, $item['kondisi']);
-            $sheet->setCellValue('J' . $row, $item['kode']);
+            $sheet->setCellValue('C' . $row, $item['nama_jenis'] ?? '');
+            $sheet->setCellValue('D' . $row, $item['nama_merk'] ?? '');
+            $sheet->setCellValue('H' . $row, $item['jumlah']);
+            $sheet->setCellValue('E' . $row, $item['baik']);
+            $sheet->setCellValue('F' . $row, $item['rr']);
+            $sheet->setCellValue('G' . $row, $item['rb']);
+            $sheet->setCellValue('I' . $row, $item['polres']);
+            $sheet->setCellValue('J' . $row, $item['polsek']);
+            $sheet->setCellValue('K' . $row, $item['gudang']);
+            $sheet->setCellValue('M' . $row, $item['ket']);
 
             $no++;
             $row++;
         }
 
         // Apply AutoFilter to the header row
-        $sheet->setAutoFilter('A1:J1');
+        $sheet->setAutoFilter('A1:M1');
 
         // Output the file to the browser
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);

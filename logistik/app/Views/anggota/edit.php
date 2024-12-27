@@ -50,11 +50,12 @@ helper('form');
                         'sipil' => 'Sipil',
                         'admin' => 'Admin',
                         'karolog' => 'Karolog',
-                        'pal' => 'Ropal',
-                        'renmin' => 'Bagrenmin',
-                        'faskon' => 'Rofaskon',
-                        'ada' => 'Roada',
-                        'bekum' => 'Robekum',
+                        'pal' => 'Bagpal',
+                        'renmin' => 'Subbagrenmin',
+                        'faskon' => 'Bagfaskon',
+                        'ada' => 'Bagada',
+                        'bekum' => 'Bagbekum',
+                        'infolog' => 'Baginfolog',
                         'gudang' => 'Gudang',
                       ];
                       echo form_dropdown(

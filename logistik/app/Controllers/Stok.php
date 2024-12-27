@@ -45,44 +45,20 @@ class Stok extends Controller
         $validation = \Config\Services::validation();
 
         $rules = [
-            'kode' => [
-                'rules' => 'required[stok.kode]',
-                'errors' => [
-                    'required' => '{field}  harus diisi.'
-                ]
-            ],
             'uraian' => [
                 'rules' => 'required[stok.uraian]',
                 'errors' => [
                     'required' => '{field}  harus diisi.'
                 ]
             ],
+            'satuan' => [
+                'rules' => 'required[stok.satuan]',
+                'errors' => [
+                    'required' => '{field}  harus diisi.'
+                ]
+            ],
             'jumlah' => [
                 'rules' => 'required[stok.jumlah]',
-                'errors' => [
-                    'required' => '{field}  harus diisi.'
-                ]
-            ],
-            'keluar' => [
-                'rules' => 'required[stok.keluar]',
-                'errors' => [
-                    'required' => '{field}  harus diisi.'
-                ]
-            ],
-            'masuk' => [
-                'rules' => 'required[stok.masuk]',
-                'errors' => [
-                    'required' => '{field}  harus diisi.'
-                ]
-            ],
-            'sisa' => [
-                'rules' => 'required[stok.sisa]',
-                'errors' => [
-                    'required' => '{field}  harus diisi.'
-                ]
-            ],
-            'ket' => [
-                'rules' => 'required[stok.ket]',
                 'errors' => [
                     'required' => '{field}  harus diisi.'
                 ]
@@ -96,13 +72,9 @@ class Stok extends Controller
 
         $stokModel = new StokModel();
         $data = [
-            'kode' => $this->request->getPost('kode'),
             'uraian' => $this->request->getPost('uraian'),
-            'jumlah' => $this->request->getPost('jumlah'),
-            'keluar' => $this->request->getPost('keluar'),
-            'masuk' => $this->request->getPost('masuk'),
-            'sisa' => $this->request->getPost('sisa'),
-            'ket' => $this->request->getPost('ket')
+            'satuan' => $this->request->getPost('satuan'),
+            'jumlah' => $this->request->getPost('jumlah')
         ];
 
         $stokModel->insert($data);
@@ -141,13 +113,9 @@ class Stok extends Controller
 
         if ($stok) {
             $data = [
-                'kode' => $this->request->getPost('kode'),
                 'uraian' => $this->request->getPost('uraian'),
-                'jumlah' => $this->request->getPost('jumlah'),
-                'keluar' => $this->request->getPost('keluar'),
-                'masuk' => $this->request->getPost('masuk'),
-                'sisa' => $this->request->getPost('sisa'),
-                'ket' => $this->request->getPost('ket')
+                'satuan' => $this->request->getPost('satuan'),
+                'jumlah' => $this->request->getPost('jumlah')
             ];
 
             $stokModel->update($id_stok, $data);
@@ -187,14 +155,14 @@ class Stok extends Controller
         $stokModel = new \App\Models\StokModel();
 
 
-        $kode = $this->request->getGet('kode');
+        $uraian = $this->request->getGet('uraian');
 
         // Start with the base query
         $builder = $stokModel->builder();
 
 
-        if ($kode) {
-            $builder->where('stok.kode', $kode);
+        if ($uraian) {
+            $builder->where('stok.uraian', $uraian);
         }
         // Get the data (this will apply the filters or return all data if no filters are set)
         $data = $builder->get()->getResultArray();
@@ -205,13 +173,9 @@ class Stok extends Controller
 
         // Set the header row
         $sheet->setCellValue('A1', 'NO');
-        $sheet->setCellValue('B1', 'KODE BARANG');
-        $sheet->setCellValue('C1', 'URAIAN');
+        $sheet->setCellValue('B1', 'URAIAN');
+        $sheet->setCellValue('C1', 'SATUAN');
         $sheet->setCellValue('D1', 'JUMLAH');
-        $sheet->setCellValue('E1', 'KELUAR');
-        $sheet->setCellValue('F1', 'MASUK');
-        $sheet->setCellValue('G1', 'SISA');
-        $sheet->setCellValue('H1', 'KETERANGAN');
 
         // Apply styles to the header row
         $headerStyle = [
@@ -230,7 +194,7 @@ class Stok extends Controller
             ],
         ];
 
-        $sheet->getStyle('A1:H1')->applyFromArray($headerStyle);
+        $sheet->getStyle('A1:D1')->applyFromArray($headerStyle);
 
         // Write data to the sheet
         $row = 2;
@@ -238,20 +202,16 @@ class Stok extends Controller
         foreach ($data as $item) {
             // Since we are joining, 'satker' is available in the data
             $sheet->setCellValue('A' . $row, $no);
-            $sheet->setCellValue('B' . $row, $item['kode']);
-            $sheet->setCellValue('C' . $row, $item['uraian']);
+            $sheet->setCellValue('B' . $row, $item['uraian']);
+            $sheet->setCellValue('C' . $row, $item['satuan']);
             $sheet->setCellValue('D' . $row, $item['jumlah']);
-            $sheet->setCellValue('E' . $row, $item['keluar']);
-            $sheet->setCellValue('F' . $row, $item['masuk']);
-            $sheet->setCellValue('G' . $row, $item['sisa']);
-            $sheet->setCellValue('H' . $row, $item['ket']);
 
             $no++;
             $row++;
         }
 
         // Apply AutoFilter to the header row
-        $sheet->setAutoFilter('A1:H1');
+        $sheet->setAutoFilter('A1:D1');
 
         // Write the file to the browser
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);

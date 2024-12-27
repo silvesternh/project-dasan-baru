@@ -4,12 +4,15 @@
     <div class="page-inner">
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
-                <a href="<?= base_url(); ?>layout/dashboard">Kembali</a>
+                <a href="<?= base_url(); ?>layout/dgudang" class="btn btn-danger"><i class="fas fa-arrow-left"></i> Kembali</a>
             </div>
         </div>
+
         <!-- Data Keseluruhan: Counting Status -->
         <div class="alert alert-danger" role="alert">
-            <h6><b>Data Stock Opname</b></h6>
+            <h6><b>Data Stock Amunisi</b></h6>
+            <!-- Search input field -->
+            <input type="text" id="searchInput" onkeyup="searchData()" placeholder="Cari..." class="form-control"><br>
             <style>
                 table {
                     border-collapse: collapse;
@@ -17,8 +20,7 @@
                     font-size: 12px;
                 }
 
-                th,
-                td {
+                th, td {
                     border: 1px solid #ddd;
                     padding: 5px;
                     text-align: left;
@@ -27,61 +29,106 @@
                 th {
                     background-color: #f0f0f0;
                 }
-            </style>
-            <table>
-                <thead>
-                    <tr>
-                        <th class="bg-danger">Kode</th>
-                        <th class="bg-danger">Uraian</th>
-                        <th class="bg-danger">Sisa</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $kodeCounts = array();
-                    $totalkode = 0; // Variabel untuk menyimpan total kode
-                    $totalSisa = 0; // Variabel untuk menyimpan total sisa
-                    $uniqueData = []; // To store unique kode and associated data for display
-                    
-                    // Loop through all stok data and group by kode
-                    foreach ($stok as $value) {
-                        $kode = $value['kode']; // Assuming 'kode' is the field for kode
-                        $uraian = $value['uraian']; // Assuming 'uraian' is the field for uraian
-                        $sisa = $value['sisa']; // Assuming 'sisa' is the field for sisa
-                    
-                        // Accumulate total 'sisa'
-                        $totalSisa += $sisa;
 
-                        // Collect all data under the same kode
-                        if (!isset($uniqueData[$kode])) {
-                            $uniqueData[$kode] = ['uraian' => $uraian, 'sisa' => 0]; // Initialize if not set
+                /* Make the table container scrollable */
+                .table-container {
+                    max-height: 400px; /* Adjust the height as needed */
+                    overflow-y: auto;
+                    border: 1px solid #ddd; /* Optional: border around the scrollable area */
+                }
+            </style>
+
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="bg-danger">No</th>
+                            <th class="bg-danger">uraian</th>
+                            <th class="bg-danger">Satuan</th>
+                            <th class="bg-danger">jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $totaljumlah = 0;
+                        $uniqueData = [];
+                        $counter = 1; // Initialize row number counter
+
+                        foreach ($stok as $value) {
+                            $uraian = $value['uraian'];
+                            $satuan = $value['satuan'];
+                            $jumlah = $value['jumlah'];
+                            $totaljumlah += $jumlah;
+
+                            if (!isset($uniqueData[$uraian])) {
+                                $uniqueData[$uraian] = ['satuan' => $satuan, 'jumlah' => 0];
+                            }
+
+                            $uniqueData[$uraian]['jumlah'] += $jumlah;
                         }
 
-                        // Add 'sisa' for this 'kode'
-                        $uniqueData[$kode]['sisa'] += $sisa;
-
-                        // Update total count of 'kode'
-                        $totalkode++;
-                    }
-
-                    // Display the data for each unique 'kode'
-                    foreach ($uniqueData as $kode => $data) {
-                        echo '<tr>';
-                        echo '<td>' . htmlspecialchars($kode) . '</td>';
-                        echo '<td>' . htmlspecialchars($data['uraian']) . '</td>';
-                        echo '<td>' . htmlspecialchars($data['sisa']) . '</td>';
-                        echo '</tr>';
-                    }
-                    ?>
-                    <tr>
-                        <th><b>Total</b></th>
-                        <th><b></b></th>
-                        <th><b><?php echo $totalSisa; ?></b></th> <!-- Total sum of 'sisa' -->
-                    </tr>
-                </tbody>
-            </table>
+                        foreach ($uniqueData as $uraian => $data) {
+                            echo '<tr>';
+                            echo '<td>' . $counter++ . '</td>'; // Display row number
+                            echo '<td>' . htmlspecialchars($uraian) . '</td>';
+                            echo '<td>' . htmlspecialchars($data['satuan']) . '</td>';
+                            echo '<td class="jumlah-cell">' . number_format($data['jumlah'], 0, ',', '.') . '</td>';
+                            echo '</tr>';
+                        }
+                        ?>
+                        <tr>
+                            <th colspan="3"><b>Total Amunisi</b></th>
+                            <th id="totalJumlah"><b><?= number_format($totaljumlah, 0, ',', '.'); ?></b></th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-
     </div>
 </div>
+
+<script>
+function searchData() {
+    var input, filter, table, tr, td, i, j, txtValue;
+    input = document.getElementById("searchInput");
+    filter = input.value.toLowerCase();
+    table = document.getElementById("dataTable");
+    tr = table.getElementsByTagName("tr");
+
+    var totalFilteredJumlah = 0; // Initialize filtered total
+
+    for (i = 1; i < tr.length - 1; i++) { // Skip header and total rows
+        tr[i].style.display = "none"; // Hide row by default
+        td = tr[i].getElementsByTagName("td");
+        var rowVisible = false;
+
+        for (j = 0; j < td.length; j++) {
+            if (td[j]) {
+                txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = ""; // Show row if match is found
+                    rowVisible = true;
+                    break;
+                }
+            }
+        }
+
+        // Add jumlah value to total if row is visible
+        if (rowVisible) {
+            var jumlahCell = tr[i].getElementsByClassName("jumlah-cell")[0];
+            if (jumlahCell) {
+                totalFilteredJumlah += parseFloat(jumlahCell.textContent.replace(/\./g, '').replace(',', '.')) || 0;
+            }
+        }
+    }
+
+    // Update the displayed total jumlah with formatted number
+    document.getElementById("totalJumlah").innerHTML = "<b>" + formatNumber(totalFilteredJumlah) + "</b>";
+}
+
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Add dots as thousands separators
+}
+</script>
+
 <?= $this->endSection(); ?>

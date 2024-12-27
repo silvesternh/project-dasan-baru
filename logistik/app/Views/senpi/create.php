@@ -33,25 +33,6 @@
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="nama" class="col-sm-2 col-form-label">Nama Penanggungjawab</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control" id="nama" name="nama" value="<?= old('nama'); ?>">
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="pangkat" class="col-sm-2 col-form-label"> pangkat</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control" id="pangkat" name="pangkat"
-                        value="<?= old('pangkat'); ?>">
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="nrp" class="col-sm-2 col-form-label">NRP</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control" id="nrp" name="nrp" value="<?= old('nrp'); ?>">
-                    </div>
-                  </div>
-                  <div class="form-group row">
                     <label for="id_jenis" class="col-sm-2 col-form-label">Jenis Senpi</label>
                     <div class="col-sm-3">
                       <select class="form-control" id="exampleFormControlSelect1" name="id_jenis">
@@ -80,35 +61,72 @@
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="no_senpi" class="col-sm-2 col-form-label">Nomor Senpi</label>
+                    <label for="jumlah" class="col-sm-2 col-form-label">Jumlah</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control" id="no_senpi" name="no_senpi"
-                        value="<?= old('no_senpi'); ?>">
-                    </div>
-                    <div class="form-group row">
-                      <label for="kondisi" class="col-sm-2 col-form-label">kondisi</label>
-                      <div class="col-sm-3">
-                        <select class="form-control" id="exampleFormControlSelect1" name="kondisi">
-                          <option value="">Pilih Kondisi.....</option>
-                          <option value="Baik">Baik</option>
-                          <option value="Rusak Ringan">Rusak Ringan</option>
-                          <option value="Rusak Berat">Rusak Berat</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label for="kode" class="col-sm-2 col-form-label">Kode</label>
-                      <div class="col-sm-10">
-                        <input type="text" class="form-control" id="kode" name="kode" value="<?= old('kode'); ?>">
-                      </div>
+                      <input type="text" class="form-control" id="jumlah" name="jumlah" value="<?= old('jumlah'); ?>" readonly>
                     </div>
                   </div>
+                  <div class="form-group row">
+                    <label for="baik" class="col-sm-2 col-form-label">Baik</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="baik" name="baik" value="<?= old('baik'); ?>" oninput="calculateTotal()">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="rr" class="col-sm-2 col-form-label">Rusak Ringan</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="rr" name="rr" value="<?= old('rr'); ?>" oninput="calculateTotal()">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="rb" class="col-sm-2 col-form-label">Rusak Berat</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="rb" name="rb" value="<?= old('rb'); ?>" oninput="calculateTotal()">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="polres" class="col-sm-2 col-form-label">Polres</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="polres" name="polres" value="<?= old('polres'); ?>">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="polsek" class="col-sm-2 col-form-label">Polsek</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="polsek" name="polsek" value="<?= old('polsek'); ?>">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="gudang" class="col-sm-2 col-form-label">Gudang</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="gudang" name="gudang" value="<?= old('gudang'); ?>">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <fieldset class="form-group row">
+                      <legend class="col-form-label col-sm-2 float-sm-left pt-0">Keterangan</legend>
+                      <div class="col-sm-10">
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="ket" id="ket1" value="Laras Panjang" checked>
+                          <label class="form-check-label" for="ket1">
+                            Laras Panjang
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="ket" id="ket2" value="Laras Pendek">
+                          <label class="form-check-label" for="ket2">
+                            Laras Pendek
+                          </label>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="card-action">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <a href="<?= base_url(); ?>senpi/index" class="btn btn-danger">Cancel</a>
+                  </div>
+                </form>
               </div>
-              <div class="card-action">
-                <button type="submit" class="btn btn-success">Submit</button>
-                <a href="<?= base_url(); ?>senpi/index" class="btn btn-danger">Cancel</a>
-              </div>
-              </form>
             </div>
           </div>
         </div>
@@ -116,4 +134,21 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Function to calculate total
+  function calculateTotal() {
+    // Get the values of baik, rusak ringan, and rusak berat
+    let baik = parseInt(document.getElementById('baik').value) || 0;
+    let rr = parseInt(document.getElementById('rr').value) || 0;
+    let rb = parseInt(document.getElementById('rb').value) || 0;
+
+    // Calculate the total
+    let total = baik + rr + rb;
+
+    // Display the total in the 'jumlah' input field
+    document.getElementById('jumlah').value = total;
+  }
+</script>
+
 <?= $this->endSection(); ?>

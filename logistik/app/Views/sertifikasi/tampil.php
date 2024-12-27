@@ -4,114 +4,21 @@
     <div class="page-inner">
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
-                <a href="<?= base_url(); ?>layout/dashboard">Kembali</a>
+                <a href="<?= base_url(); ?>layout/dada" class="btn btn-danger"><i class="fas fa-arrow-left"></i> Kembali</a>
             </div>
         </div>
+        <h4>Data Personel Bersertifikasi</h4>
 
-        <!-- Alert for the main data -->
+        <!-- Data Satker -->
         <div class="alert alert-danger" role="alert">
-            <h5><b>Data Personil Bersertifikasi</b></h5>
-            <div class="table-container">
-                <!-- Styling the table -->
-                <style>
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        font-size: 11px;
-                    }
+            <h6><b>Data Satker</b></h6>
 
-                    th,
-                    td {
-                        padding: 6px;
-                        text-align: left;
-                        border: 1px solid #ddd;
-                    }
-
-                    th {
-                        background-color: #ff5733;
-                        color: white;
-                    }
-
-                    tr:nth-child(even) {
-                        background-color: #f2f2f2;
-                    }
-
-                    tr:hover {
-                        background-color: #f9f9f9;
-                    }
-
-                    .table-footer {
-                        font-weight: bold;
-                        background-color: #e0e0e0;
-                    }
-
-                    .table-footer th,
-                    .table-footer td {
-                        background-color: #e0e0e0;
-                        color: black;
-                    }
-
-                    .table-container {
-                        overflow-x: auto;
-                        margin-top: 20px;
-                    }
-                </style>
-
-                <!-- Data table for Satker -->
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="bg-danger">Satker</th>
-                            <th class="bg-danger">Jumlah</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-
-                        use App\Models\SertifikasiModel;
-
-                        // Load Sertifikasi model
-                        $sertifikasiModel = new SertifikasiModel();
-                        // Get data sertifikasi with satker details
-                        $sertifikasiWithSatker = $sertifikasiModel->getSertifikasiWithSatker();
-
-                        $satkerCounts = [];
-                        $totalsatker = 0; // Initialize total satker count
-                        
-                        // Loop through sertifikasiWithSatker to count satker
-                        if ($sertifikasiWithSatker) {
-                            foreach ($sertifikasiWithSatker as $value) {
-                                $satker = $value['nama_satker'];
-                                if (!isset($satkerCounts[$satker])) {
-                                    $satkerCounts[$satker] = 0;
-                                }
-                                $satkerCounts[$satker]++;
-                                $totalsatker++; // Increment total satker count
-                            }
-                        }
-
-                        // Output the counts for each satker
-                        foreach ($satkerCounts as $satker => $count) {
-                            echo '<tr>';
-                            echo '<td>' . htmlspecialchars($satker) . '</td>';
-                            echo '<td>' . $count . '</td>';
-                            echo '</tr>';
-                        }
-                        ?>
-                    </tbody>
-                    <tfoot class="table-footer">
-                        <tr>
-                            <th><b>Total Personil</b></th>
-                            <th><b><?php echo $totalsatker; ?></b></th>
-                        </tr>
-                    </tfoot>
-                </table>
+            <!-- Input Pencarian -->
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control w-50" placeholder="Cari Satker..." onkeyup="filterTable()">
             </div>
-        </div>
 
-        <!-- Alert for the data per satker -->
-        <div class="alert alert-primary" role="alert">
-            <h6><b>Data Persatker / Satwil</b></h6><br>
+            <!-- Tabel -->
             <style>
                 table {
                     border-collapse: collapse;
@@ -130,82 +37,171 @@
                     background-color: #f0f0f0;
                 }
 
-                .table-secondary {
-                    background-color: #f9f9f9;
-                }
-
-                .table-header {
-                    background-color: #f5f5f5;
-                    text-align: center;
-                }
-
-                /* New Styles to Change Column Colors to Blue */
-                th,
-
-
-                /* Styling the header to have a more distinct blue shade */
-                th {
-                    background-color: #4a90e2;
-                    /* Blue background for headers */
+                .bg-danger {
+                    background-color: #dc3545;
                     color: white;
-                    /* White text color for headers */
+                }
+
+                /* Enable scrolling in the modal body */
+                .modal-body {
+                    max-height: 400px; /* Adjust this value as necessary */
+                    overflow-y: auto;  /* Enable vertical scrolling */
                 }
             </style>
+            <table>
+                <thead class="table-danger">
+                    <tr>
+                        <th>No</th>
+                        <th>Satker</th>
+                        <th>Jumlah</th>
+                        <th>Ket</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    use App\Models\SertifikasiModel;
 
-            <!-- Display Satker Names above the table -->
-            <?php
-            // Initialize variable to keep track of the last Satker displayed
-            $lastSatker = '';
+                    $sertifikasiModel = new SertifikasiModel();
+                    $sertifikasiWithSatker = $sertifikasiModel->getSertifikasiWithSatker();
+                    $satkerCounts = [];
+                    $totalBMN = 0;
+                    $no = 1;
 
-            // Loop through sertifikasiWithSatker to group by satker, nama, and pangkat
-            if ($sertifikasiWithSatker) {
-                foreach ($sertifikasiWithSatker as $value) {
-                    if (isset($value['nama_satker'], $value['nama'], $value['pangkat'], $value['nrp'])) {
-                        $satker = $value['nama_satker'];
-                        $nama = $value['nama'];
-                        $pangkat = $value['pangkat'];
-                        $nrp = $value['nrp'];
-
-                        // Check if the Satker is different from the last displayed Satker
-                        if ($satker !== $lastSatker) {
-                            if ($lastSatker !== '') {
-                                // If it's not the first Satker, close the previous table and move to the next one
-                                echo '</table><br>';
-                            }
-
-                            // Display the new Satker Name
-                            echo '<h6><b>' . $satker . '</b></h6>';
-
-                            // Start a new table for the new Satker
-                            echo '<table>';
-                            echo '<thead>';
-                            echo '<tr class="table-header">';
-                            echo '<th>Nama</th>';
-                            echo '<th>Pangkat</th>';
-                            echo '<th>NRP</th>';
-                            echo '</tr>';
-                            echo '</thead>';
-                            echo '<tbody>';
+                    if (!empty($sertifikasiWithSatker)) {
+                        // Grouping by Satker
+                        foreach ($sertifikasiWithSatker as $value) {
+                            $satker = $value['nama_satker'] ?? 'Tidak Diketahui';
+                            $satkerCounts[$satker][] = $value;
                         }
 
-                        // Output the row for the person
-                        echo '<tr>';
-                        echo '<td>' . $nama . '</td>';
-                        echo '<td>' . $pangkat . '</td>';
-                        echo '<td>' . $nrp . '</td>';
-                        echo '</tr>';
+                        // Sorting each Satker's personnel by NRP in ascending order
+                        foreach ($satkerCounts as $satker => &$details) {
+                            usort($details, function($a, $b) {
+                                return (int)$a['nrp'] - (int)$b['nrp']; // Sorting by NRP in ascending order
+                            });
+                        }
 
-                        // Update the lastSatker to the current one
-                        $lastSatker = $satker;
+                        // Render each satker row
+                        foreach ($satkerCounts as $satker => $details) {
+                            $jumlah = count($details);
+                            $totalBMN += $jumlah;
+
+                            echo '<tr class="satker-row">';
+                            echo '<td>' . $no++ . '</td>';
+                            echo '<td>' . htmlspecialchars($satker) . '</td>';
+                            echo '<td>' . number_format($jumlah, 0, ',', '.') . '</td>';
+                            echo '<td><button class="btn btn-info btn-sm" onclick="showDetail(\'' . htmlspecialchars($satker) . '\')">Detail</button></td>';
+                            echo '</tr>';
+                        }
+                    } else {
+                        echo '<tr><td colspan="4">Data tidak ditemukan.</td></tr>';
                     }
-                }
-            }
-            ?>
-
-            <!-- End of the last table -->
-            </tbody>
+                    ?>
+                    <tr class="total-row">
+                        <th colspan="2"><b>Total Personel</b></th>
+                        <th><b><?= number_format($totalBMN, 0, ',', '.'); ?></b></th>
+                        <th></th>
+                    </tr>
+                </tbody>
             </table>
         </div>
+
+        <!-- Modal for Detail -->
+        <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Data Personel Bersertifikasi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id="modalSatkerName"></h6>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama</th>
+                                    <th>Pangkat</th>
+                                    <th>NRP</th>
+                                    <th>Jabatan</th>
+                                    <th>Nomor Sertifikasi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalDetailContent"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script -->
+        <script>
+            const sertifikasiData = <?= json_encode($satkerCounts); ?>;
+
+            // Filter Table based on the input value
+            function filterTable() {
+                const input = document.getElementById("searchInput").value.toLowerCase();
+                const rows = document.querySelectorAll(".satker-row");
+                const totalRow = document.querySelector(".total-row");
+                let visibleRows = 0;
+                let totalFiltered = 0;
+
+                rows.forEach(row => {
+                    const satkerCell = row.querySelector("td:nth-child(2)");
+                    const jumlahCell = row.querySelector("td:nth-child(3)");
+
+                    if (satkerCell) {
+                        const text = satkerCell.textContent.toLowerCase();
+                        if (text.includes(input)) {
+                            row.style.display = "";
+                            visibleRows++;
+                            totalFiltered += parseInt(jumlahCell.textContent, 10) || 0;
+                        } else {
+                            row.style.display = "none";
+                        }
+                    }
+                });
+
+                totalRow.style.display = visibleRows > 0 ? "" : "none";
+
+                // Update the total based on filtered data
+                const totalCell = totalRow.querySelector("th:nth-child(3)");
+                totalCell.textContent = totalFiltered;
+            }
+
+            // Show modal with details for a specific Satker
+            function showDetail(satker) {
+                const modalContent = document.getElementById('modalDetailContent');
+                const satkerName = document.getElementById('modalSatkerName');
+
+                modalContent.innerHTML = '';
+                satkerName.textContent = '' + satker;
+
+                const details = sertifikasiData[satker];
+                if (details && details.length > 0) {
+                    details.forEach((item, index) => {
+                        modalContent.innerHTML += ` 
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${item.nama ?? 'Tidak Diketahui'}</td>
+                                <td>${item.pangkat ?? 'Tidak Diketahui'}</td>
+                                <td>${item.nrp ?? 'Tidak Diketahui'}</td>
+                                <td>${item.jabatan ?? 'Tidak Diketahui'}</td>
+                                <td>${item.nomor ?? 'Tidak Diketahui'}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    modalContent.innerHTML = '<tr><td colspan="7">Data tidak ditemukan.</td></tr>';
+                }
+
+                const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                modal.show();
+            }
+        </script>
 
     </div>
 </div>

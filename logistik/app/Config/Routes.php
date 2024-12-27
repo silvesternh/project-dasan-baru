@@ -12,6 +12,16 @@ service('auth')->routes($routes);
 $routes->get('/layout/index', 'Layout::index');
 $routes->get('/layout/tampil', 'Layout::tampil');
 $routes->get('/layout/dashboard', 'Layout::dashboard');
+$routes->get('/layout/drenmin', 'Layout::drenmin');
+$routes->get('/layout/dfaskon', 'Layout::dfaskon');
+$routes->get('/layout/dpal', 'Layout::dpal');
+$routes->get('/layout/dada', 'Layout::dada');
+$routes->get('/layout/dinfo', 'Layout::dinfo');
+$routes->get('/layout/dbekum', 'Layout::dbekum');
+$routes->get('/layout/dgudang', 'Layout::dgudang');
+
+$routes->get('/layout/index1', 'Layout::index1');
+$routes->get('/layout/dashboard1', 'Layout::dashboard1');
 
 $routes->group('kendaraan', function () use ($routes) {
     $routes->get('index', 'Kendaraan::index');
@@ -114,6 +124,7 @@ $routes->group('bangunan', function () use ($routes) {
 
 $routes->group('kendaraan', function () use ($routes) {
     $routes->get('index', 'Kendaraan::index');
+    $routes->get('data', 'Kendaraan::data');
     $routes->get('tampil', 'Kendaraan::tampil');
     $routes->get('export', 'Kendaraan::export');
     $routes->get('create', 'Kendaraan::create');
@@ -127,6 +138,7 @@ $routes->group('kendaraan', function () use ($routes) {
 
 $routes->group('senpi', function () use ($routes) {
     $routes->get('index', 'Senpi::index');
+    $routes->get('data', 'Senpi::data');
     $routes->get('tampil', 'Senpi::tampil');
     $routes->get('export', 'Senpi::export');
     $routes->get('create', 'Senpi::create');
@@ -188,4 +200,99 @@ $routes->group('stok', function () use ($routes) {
     $routes->post('edit/(:num)', 'Stok::edit/$1');
     $routes->post('update/(:num)', 'Stok::update/$1');
     $routes->get('delete/(:num)', 'Stok::delete/$1');
+});
+
+$routes->group('alsus', function () use ($routes) {
+    $routes->get('index', 'Alsus::index');
+    $routes->get('data', 'Alsus::data');
+    $routes->get('tampil', 'Alsus::tampil');
+    $routes->get('export', 'Alsus::export');
+    $routes->get('create', 'Alsus::create');
+    $routes->get('impor', 'Alsus::impor');
+    $routes->post('store', 'Alsus::store');
+    $routes->post('prosesImpor', 'Alsus::prosesImpor');
+    $routes->post('edit/(:num)', 'Alsus::edit/$1');
+    $routes->post('update/(:num)', 'Alsus::update/$1');
+    $routes->get('delete/(:num)', 'Alsus::delete/$1');
+});
+
+$routes->group('psp', function () use ($routes) {
+    $routes->get('index', 'Psp::index');
+    $routes->get('tampil', 'Psp::tampil');
+    $routes->get('export', 'Psp::export');
+    $routes->get('create', 'Psp::create');
+    $routes->get('impor', 'Psp::impor');
+    $routes->post('store', 'Psp::store');
+    $routes->post('prosesImpor', 'Psp::prosesImpor');
+    $routes->post('edit/(:num)', 'Psp::edit/$1');
+    $routes->post('update/(:num)', 'Psp::update/$1');
+    $routes->get('delete/(:num)', 'Psp::delete/$1');
+});
+
+$routes->group('stokkapor', function () use ($routes) {
+    $routes->get('index', 'Stokkapor::index');
+    $routes->get('tampil', 'Stokkapor::tampil');
+    $routes->get('export', 'Stokkapor::export');
+    $routes->get('create', 'Stokkapor::create');
+    $routes->get('impor', 'Stokkapor::impor');
+    $routes->post('store', 'Stokkapor::store');
+    $routes->post('prosesImpor', 'Stokkapor::prosesImpor');
+    $routes->post('edit/(:num)', 'Stokkapor::edit/$1');
+    $routes->post('update/(:num)', 'Stokkapor::update/$1');
+    $routes->get('delete/(:num)', 'Stokkapor::delete/$1');
+});
+
+$routes->group('alsintor', function () use ($routes) {
+    $routes->get('index', 'Alsintor::index');
+    $routes->get('data', 'Alsintor::data');
+    $routes->get('tampil', 'Alsintor::tampil');
+    $routes->get('export', 'Alsintor::export');
+    $routes->get('create', 'Alsintor::create');
+    $routes->get('impor', 'Alsintor::impor');
+    $routes->post('store', 'Alsintor::store');
+    $routes->post('prosesImpor', 'Alsintor::prosesImpor');
+    $routes->post('edit/(:num)', 'Alsintor::edit/$1');
+    $routes->post('update/(:num)', 'Alsintor::update/$1');
+    $routes->get('delete/(:num)', 'Alsintor::delete/$1');
+});
+
+$routes->group('anggotarolog', function () use ($routes) {
+    $routes->get('index', 'Anggotarolog::index');
+    $routes->get('tampil', 'Anggotarolog::tampil');
+    $routes->get('export', 'Anggotarolog::export');
+    $routes->get('create', 'Anggotarolog::create');
+    $routes->get('impor', 'Anggotarolog::impor');
+    $routes->post('store', 'Anggotarolog::store');
+    $routes->post('prosesImpor', 'Anggotarolog::prosesImpor');
+    $routes->post('edit/(:num)', 'Anggotarolog::edit/$1');
+    $routes->post('update/(:num)', 'Anggotarolog::update/$1');
+    $routes->get('delete/(:num)', 'Anggotarolog::delete/$1');
+});
+
+$routes->group('alkes', function () use ($routes) {
+    $routes->get('index', 'Alkes::index');
+    $routes->get('data', 'Alkes::data');
+    $routes->get('tampil', 'Alkes::tampil');
+    $routes->get('export', 'Alkes::export');
+    $routes->get('create', 'Alkes::create');
+    $routes->get('impor', 'Alkes::impor');
+    $routes->post('store', 'Alkes::store');
+    $routes->post('prosesImpor', 'Alkes::prosesImpor');
+    $routes->post('edit/(:num)', 'Alkes::edit/$1');
+    $routes->post('update/(:num)', 'Alkes::update/$1');
+    $routes->get('delete/(:num)', 'Alkes::delete/$1');
+});
+
+$routes->group('pemegang', function () use ($routes) {
+    $routes->get('index', 'Pemegang::index');
+    $routes->get('data', 'Pemegang::data');
+    $routes->get('tampil', 'Pemegang::tampil');
+    $routes->get('export', 'Pemegang::export');
+    $routes->get('create', 'Pemegang::create');
+    $routes->get('impor', 'Pemegang::impor');
+    $routes->post('store', 'Pemegang::store');
+    $routes->post('prosesImpor', 'Pemegang::prosesImpor');
+    $routes->post('edit/(:num)', 'Pemegang::edit/$1');
+    $routes->post('update/(:num)', 'Pemegang::update/$1');
+    $routes->get('delete/(:num)', 'Pemegang::delete/$1');
 });

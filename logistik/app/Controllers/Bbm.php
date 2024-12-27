@@ -308,7 +308,7 @@ class Bbm extends Controller
 
     public function tampil()
     {
-        if (!auth()->user()->can('bekum.access')) {
+         if (!auth()->user()->can('bekum.access')) {
             return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
         }
         $model = new BbmModel();

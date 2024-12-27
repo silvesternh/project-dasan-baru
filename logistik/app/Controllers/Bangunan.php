@@ -267,9 +267,10 @@ class Bangunan extends Controller
 
     public function tampil()
     {
-        if (!auth()->user()->can('faskon.access')) {
+         if (!auth()->user()->can('faskon.access')) {
             return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
         }
+        
         $model = new BangunanModel();
         $bangunan = $model->findAll();
         return view('bangunan/tampil', ['bangunan' => $bangunan]);

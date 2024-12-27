@@ -51,6 +51,7 @@
                         <option value="">Pilih status.....</option>
                         <option value="sudah bersertifikasi">sudah bersertifikasi</option>
                         <option value="belum bersertifikasi">belum bersertifikasi</option>
+                        <option value="pinjam pakai">pinjam pakai</option>
                       </select>
                     </div>
                   </div>

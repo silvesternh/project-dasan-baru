@@ -57,7 +57,7 @@
               <?php endif; ?>
               <!-- Data Table -->
               <div>
-                <h4>Data kapor</h4>
+                <h4>Data Pengadaan Kapor</h4>
               </div>
               <div class="table-responsive">
                 <table id="basic-datatables" class="table-bordered"
@@ -129,9 +129,10 @@
             resetRowNumbers(table); // Reset row numbers after filtering
           });
           $('#filter-tahun').on('change', function () {
-            table.column(6).search(this.value).draw(); // Correct column index for 'tahun'
-            resetRowNumbers(table); // Reset row numbers after filtering
+             table.column(6).search(this.value).draw(); // Menggunakan indeks kolom yang benar untuk 'tahun'
+            resetRowNumbers(table); // Reset nomor urut setelah filter diterapkan
           });
+
 
           // Function to reset row numbers after filtering
           function resetRowNumbers(table) {

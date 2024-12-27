@@ -312,7 +312,7 @@ class Pengadaan extends Controller
 
     public function tampil()
     {
-        if (!auth()->user()->can('ada.access')) {
+       if (!auth()->user()->can('ada.access')) {
             return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');
         }
         $model = new PengadaanModel();

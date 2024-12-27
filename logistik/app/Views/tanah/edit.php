@@ -63,6 +63,7 @@
                         <option value="">Pilih status.....</option>
                         <option value="sudah bersertifikasi" <?= $tanah['status'] == 'sudah bersertifikasi' ? 'selected' : '' ?>>sudah bersertifikasi</option>
                         <option value="belum bersertifikasi" <?= $tanah['status'] == 'belum bersertifikasi' ? 'selected' : '' ?>>sudah bersertifikasi</option>
+                        <option value="pinjam pakai" <?= $tanah['status'] == 'pinjam pakai' ? 'selected' : '' ?>>pinjam pakai</option>
                       </select>
                     </div>
                   </div>

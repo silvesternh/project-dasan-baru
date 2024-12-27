@@ -70,19 +70,21 @@
               </div>
               <div class="table-responsive">
                 <table id="basic-datatables" class="table-bordered"
-                  style="font-size: 14px; width: 200%; border: 1px solid #ddd;">
+                  style="font-size: 14px; width: 150%; border: 1px solid #ddd;">
                   <thead>
                     <tr style="background-color: #0000FF; height: 35px; text-align: center; color: #FFFFFF;">
                       <th>No</th>
                       <th>Satker/Satwil</th>
-                      <th>Penanggung Jawab</th>
-                      <th>Pangkat</th>
-                      <th>NRP</th>
                       <th>Jenis Senpi</th>
                       <th>Merk Senpi</th>
-                      <th>Nomor Senpi</th>
-                      <th>Kondisi</th>
-                      <th>Kode</th>
+                      <th>Jumlah</th>
+                      <th>Baik</th>
+                      <th>Rusak Ringan</th>
+                      <th>Rusak Berat</th>
+                      <th>Polres</th>
+                      <th>Polsek</th>
+                      <th>Gudang</th>
+                      <th>ket</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -91,14 +93,16 @@
                       <tr>
                         <td style="text-align: center;"><?= $key + 1 ?></td>
                         <td><?= $value['nama_satker'] ?></td>
-                        <td><?= $value['nama'] ?></td>
-                        <td><?= $value['pangkat'] ?></td>
-                        <td><?= $value['nrp'] ?></td>
                         <td><?= $value['nama_jenis'] ?></td>
                         <td><?= $value['nama_merk'] ?></td>
-                        <td><?= $value['no_senpi'] ?></td>
-                        <td><?= $value['kondisi'] ?></td>
-                        <td><?= $value['kode'] ?></td>
+                        <td><?= $value['jumlah'] ?></td>
+                        <td><?= $value['baik'] ?></td>
+                        <td><?= $value['rr'] ?></td>
+                        <td><?= $value['rb'] ?></td>
+                        <td><?= $value['polres'] ?></td>
+                        <td><?= $value['polsek'] ?></td>
+                        <td><?= $value['gudang'] ?></td>
+                        <td><?= $value['ket'] ?></td>
                         <td>
                           <form action="<?= base_url('senpi/edit/' . $value['id_senpi']) ?>" method="post"
                             style="display: inline-block;">
@@ -129,53 +133,56 @@
       <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
       <script>
         $(document).ready(function () {
-          // Initialize DataTable with scrollX and language options
-          var table = $('#basic-datatables').DataTable({
-            "scrollX": true,
-            "autoWidth": true,
-            "language": {
-              "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Indonesian.json"
-            }
-          });
+  // Initialize DataTable with scrollX and language options
+  var table = $('#basic-datatables').DataTable({
+    "scrollX": true,
+    "autoWidth": true,
+    "language": {
+      "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Indonesian.json"
+    }
+  });
 
-          // Event listeners for filter dropdowns
-          $('#filter-satker').on('change', function () {
-            table.column(1).search(this.value).draw();
-            resetRowNumbers(table); // Reset row numbers after filtering
-          });
-          $('#filter-jenis').on('change', function () {
-            table.column(5).search(this.value).draw();
-            resetRowNumbers(table); // Reset row numbers after filtering
-          });
-          $('#filter-merk').on('change', function () {
-            table.column(6).search(this.value).draw();
-            resetRowNumbers(table); // Reset row numbers after filtering
-          });
+  // Event listeners for filter dropdowns
+  $('#filter-satker').on('change', function () {
+    table.column(1).search(this.value).draw();
+    resetRowNumbers(table); // Reset row numbers after filtering
+  });
 
-          // Function to reset row numbers after filtering
-          function resetRowNumbers(table) {
-            table.rows().every(function (rowIdx, tableLoop, rowLoop) {
-              var row = this.node();
-              $('td:eq(0)', row).html(rowIdx + 1); // Set the row number (first column)
-            });
-          }
+  $('#filter-jenis').on('change', function () {
+    table.column(2).search(this.value).draw();
+    resetRowNumbers(table); // Reset row numbers after filtering
+  });
 
-          // Export data based on filters
-          $('.btn-success').on('click', function (e) { // Make sure the "Export" button is clicked
-            e.preventDefault();
+  $('#filter-merk').on('change', function () {
+    table.column(3).search(this.value).draw();
+    resetRowNumbers(table); // Reset row numbers after filtering
+  });
 
-            // Get current filter values
-            const satker = $('#filter-satker').val();
-            const jenis = $('#filter-jenis').val();
-            const merk = $('#filter-merk').val();
+  // Function to reset row numbers after filtering
+  function resetRowNumbers(table) {
+    table.rows().every(function (rowIdx, tableLoop, rowLoop) {
+      var row = this.node();
+      $('td:eq(0)', row).html(rowIdx + 1); // Set the row number (first column)
+    });
+  }
 
-            // Construct the export URL with query parameters
-            const exportUrl = `<?= base_url(); ?>/senpi/export?nama_satker=${satker}&nama_jenis=${jenis}&nama_merk=${merk}`;
+  // Export data based on filters
+  $('.btn-success').on('click', function (e) { // Make sure the "Export" button is clicked
+    e.preventDefault();
 
-            // Trigger download by redirecting to the export URL
-            window.location.href = exportUrl;
-          });
-        });
+    // Get current filter values
+    const satker = $('#filter-satker').val();
+    const jenis = $('#filter-jenis').val();
+    const merk = $('#filter-merk').val();
+
+    // Construct the export URL with query parameters
+    const exportUrl = `<?= base_url(); ?>/senpi/export?nama_satker=${satker}&nama_jenis=${jenis}&nama_merk=${merk}`;
+
+    // Trigger download by redirecting to the export URL
+    window.location.href = exportUrl;
+  });
+});
+
       </script>
 
     </div>

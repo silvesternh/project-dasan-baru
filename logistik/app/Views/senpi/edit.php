@@ -38,37 +38,12 @@
                     </div>
                   </div>
 
-                  <!-- Nopol -->
-                  <div class="form-group row">
-                    <label for="nama" class="col-sm-2 col-form-label">Nama Penanggungjawab</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control" id="nama" name="nama" value="<?= $senpi['nama']; ?>">
-                    </div>
-                  </div>
-
-                  <!-- Jenis -->
-                  <div class="form-group row">
-                    <label for="pangkat" class="col-sm-2 col-form-label">Pangkat</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control" id="pangkat" name="pangkat"
-                        value="<?= $senpi['pangkat']; ?>">
-                    </div>
-                  </div>
-
-                  <!-- Merk -->
-                  <div class="form-group row">
-                    <label for="nrp" class="col-sm-2 col-form-label">NRP</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control" id="nrp" name="nrp" value="<?= $senpi['nrp']; ?>">
-                    </div>
-                  </div>
-
-                  <!-- Satker Dropdown -->
+                  <!-- Jenis Senpi Dropdown -->
                   <div class="form-group row">
                     <label for="id_jenis" class="col-sm-2 col-form-label">Jenis Senpi</label>
                     <div class="col-sm-3">
                       <select class="form-control" name="id_jenis" id="exampleFormControlSelect1">
-                        <option value="">Pilih Penis Senpi.....</option>
+                        <option value="">Pilih Jenis Senpi.....</option>
                         <?php
                         $db = \Config\Database::connect();
                         $jenis = $db->query("SELECT * FROM jenis")->getResult();
@@ -81,7 +56,7 @@
                     </div>
                   </div>
 
-                  <!-- Satker Dropdown -->
+                  <!-- Merk Senpi Dropdown -->
                   <div class="form-group row">
                     <label for="id_merk" class="col-sm-2 col-form-label">Merk Senpi</label>
                     <div class="col-sm-3">
@@ -99,36 +74,77 @@
                     </div>
                   </div>
 
-                  <!-- Tahun Pembuatan -->
+                  <!-- Form Fields -->
                   <div class="form-group row">
-                    <label for="no_senpi" class="col-sm-2 col-form-label">Nomor Senpi</label>
+                    <label for="jumlah" class="col-sm-2 col-form-label">Jumlah</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control" id="no_senpi" name="no_senpi"
-                        value="<?= $senpi['no_senpi']; ?>">
+                      <input type="text" class="form-control" id="jumlah" name="jumlah" value="<?= $senpi['jumlah']; ?>" readonly>
                     </div>
                   </div>
 
-                  <!-- Kondisi -->
                   <div class="form-group row">
-                    <label for="kondisi" class="col-sm-2 col-form-label">Kondisi</label>
-                    <div class="col-sm-3">
-                      <select class="form-control" name="kondisi" id="exampleFormControlSelect1">
-                        <option value="">Pilih salah satu.....</option>
-                        <option value="Baik" <?= $senpi['kondisi'] == 'Baik' ? 'selected' : '' ?>>Baik</option>
-                        <option value="Rusak Ringan" <?= $senpi['kondisi'] == 'Rusak Ringan' ? 'selected' : '' ?>>Rusak
-                          Ringan</option>
-                        <option value="Rusak Berat" <?= $senpi['kondisi'] == 'Rusak Berat' ? 'selected' : '' ?>>Rusak Berat
-                        </option>
-                      </select>
+                    <label for="baik" class="col-sm-2 col-form-label">Baik</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="baik" name="baik" value="<?= $senpi['baik']; ?>" oninput="calculateTotal()">
                     </div>
                   </div>
 
-                  <!-- Pemegang -->
                   <div class="form-group row">
-                    <label for="kode" class="col-sm-2 col-form-label">Kode</label>
+                    <label for="rr" class="col-sm-2 col-form-label">Rusak Ringan</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control" id="kode" name="kode" value="<?= $senpi['kode']; ?>">
+                      <input type="text" class="form-control" id="rr" name="rr" value="<?= $senpi['rr']; ?>" oninput="calculateTotal()">
                     </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label for="rb" class="col-sm-2 col-form-label">Rusak Berat</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="rb" name="rb" value="<?= $senpi['rb']; ?>" oninput="calculateTotal()">
+                    </div>
+                  </div>
+
+                  <!-- Additional Fields -->
+                  <div class="form-group row">
+                    <label for="polres" class="col-sm-2 col-form-label">Polres</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="polres" name="polres" value="<?= $senpi['polres']; ?>">
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label for="polsek" class="col-sm-2 col-form-label">Polsek</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="polsek" name="polsek" value="<?= $senpi['polsek']; ?>">
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label for="gudang" class="col-sm-2 col-form-label">Gudang</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="gudang" name="gudang" value="<?= $senpi['gudang']; ?>">
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <fieldset class="form-group row">
+                      <legend class="col-form-label col-sm-2 float-sm-left pt-0">Keterangan</legend>
+                      <div class="col-sm-10">
+                        <div class="form-check">
+                          <!-- Check if 'ket' value is 'Laras Panjang' -->
+                          <input class="form-check-input" type="radio" name="ket" id="ket1" value="Laras Panjang" <?= ($senpi['ket'] == 'Laras Panjang') ? 'checked' : ''; ?>>
+                          <label class="form-check-label" for="ket1">
+                            Laras Panjang
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <!-- Check if 'ket' value is 'Laras Pendek' -->
+                          <input class="form-check-input" type="radio" name="ket" id="ket2" value="Laras Pendek" <?= ($senpi['ket'] == 'Laras Pendek') ? 'checked' : ''; ?>>
+                          <label class="form-check-label" for="ket2">
+                            Laras Pendek
+                          </label>
+                        </div>
+                      </div>
+                    </fieldset>
                   </div>
 
                   <!-- Submit and Cancel -->
@@ -147,4 +163,17 @@
     </div>
   </div>
 </div>
+
+<!-- JavaScript for Total Calculation -->
+<script>
+  function calculateTotal() {
+    let baik = parseInt(document.getElementById('baik').value) || 0;
+    let rr = parseInt(document.getElementById('rr').value) || 0;
+    let rb = parseInt(document.getElementById('rb').value) || 0;
+
+    let total = baik + rr + rb;
+    document.getElementById('jumlah').value = total;
+  }
+</script>
+
 <?= $this->endSection(); ?>

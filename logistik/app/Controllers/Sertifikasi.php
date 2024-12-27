@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Sertifikasi extends Controller
 {
-    public function index(): string
+    public function index()
     {
         if (!auth()->user()->can('ada.access')) {
             return redirect()->to('layout/dashboard')->with('error', 'Akses Ditolak !!! Anda tidak diizinkan untuk mengkases halaman tersebut');

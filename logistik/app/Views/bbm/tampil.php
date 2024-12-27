@@ -4,7 +4,7 @@
     <div class="page-inner">
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
-                <a href="<?= base_url(); ?>layout/dashboard">Kembali</a>
+                <a href="<?= base_url(); ?>layout/dbekum" class="btn btn-danger"><i class="fas fa-arrow-left"></i> Kembali</a>
             </div>
         </div>
         <div class="alert alert-primary" role="alert">

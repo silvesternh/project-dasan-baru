@@ -9,7 +9,7 @@ class SenpiModel extends Model
   protected $table = 'senpi';
   protected $primaryKey = 'id_senpi';
 
-  protected $allowedFields = ['id_satker', 'nama', 'jenis', 'pangkat', 'nrp', 'id_jenis', 'id_merk', 'no_senpi', 'kondisi', 'kode'];
+  protected $allowedFields = ['id_satker', 'id_jenis', 'id_merk', 'jumlah', 'baik', 'rr', 'rb', 'polres', 'polsek', 'gudang', 'ket'];
 
   public function export()
   {
